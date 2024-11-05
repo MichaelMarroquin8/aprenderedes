@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 
-const PdfGeneratorReplica = ({ data }) => {
+const pdfConstanciaAprobacion = ({ data }) => {
   const doc = new jsPDF("p", "mm", "a4"); // Documento A4
   const margin = 10;
   let cursorY = 20;
@@ -238,4 +238,4 @@ d.	Fallecimiento.
   doc.save(`Estatutos_Cooperativa_Replica.pdf`);
 };
 
-export default PdfGeneratorReplica;
+export default pdfConstanciaAprobacion;

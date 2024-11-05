@@ -25,6 +25,8 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { firestore } from "src/services/firebase-config";
 import CheckboxWithInput from "../Checks/CheckboxWithInput";
 import RadioCheck from "../Checks/RadioCheck";
+import MultiCheck from "../Checks/Checkbox";
+import CustomSelect from "../Selects/CustomSelect";
 
 const steps = [
   "Datos del solicitante",
@@ -102,6 +104,14 @@ export default function FormMatricula() {
     }));
   };
 
+  const handleSelectChange = (name, value) => {
+    console.log(name, value);
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleInputChange = (name, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -113,6 +123,13 @@ export default function FormMatricula() {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleMultiCheckChange = (name, selectedOptions) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: selectedOptions,
     }));
   };
 
@@ -144,23 +161,19 @@ export default function FormMatricula() {
       case 0:
         return (
           <Stack spacing={2}>
-            <FormControl>
-              <FormLabel>Tipo de Documento</FormLabel>
-              <Select defaultValue={"CC"} name="target" onChange={handleChange}>
-                <Option value="CC">Cédula de ciudadanía</Option>
-                <Option value="CE">Cédula de Extranjería</Option>
-                <Option value="PP">Pasaporte</Option>
-                <Option value="TI">Tarjeta de identidad</Option>
-                <Option value="PE">Permiso Especial de Permanencia</Option>
-                <Option value="PPT">Permiso de protección temporal</Option>
-              </Select>
-            </FormControl>
-            <FormInput
-              label="Número de Documento"
-              name="id"
-              value={formData.id}
-              onChange={handleChange}
-              placeholder="Número de documento"
+            <CustomSelect
+              label="Tipo de documento"
+              name="typeId"
+              defaultValue={formData.typeId || " "}
+              options={[
+                { value: "CC", label: "Cédula de ciudadanía" },
+                { value: "CE", label: "Cédula de Extranjería" },
+                { value: "PP", label: "Pasaporte" },
+                { value: "TI", label: "Tarjeta de identidad" },
+                { value: "PE", label: "Permiso Especial de Permanencia" },
+                { value: "PPT", label: "Permiso de protección temporal" },
+              ]}
+              onChange={handleSelectChange}
             />
 
             <FormInput
@@ -214,9 +227,11 @@ export default function FormMatricula() {
                 registrado y por lo tanto debería establecer un nombre diferente
                 para su cooperativa
               </ListItem>
-              <a href="https://www.ccc.org.co/sedevirtual/consulta-homonimia/">
-                Verificar Homonimia
-              </a>
+              <ListItem>
+                <a href="https://www.ccc.org.co/sedevirtual/consulta-homonimia/">
+                  <strong color="info">Verificar Homonimia</strong>
+                </a>
+              </ListItem>
               <ListItem>
                 Allí debe ingresar por el espacio: REGISTRO DE ENTIDADES DE LA
                 ECONOMIA SOLIDARIA
@@ -227,6 +242,12 @@ export default function FormMatricula() {
       case 2:
         return (
           <Stack spacing={2}>
+            <Alert color="neutral">
+              Ingrese en la plataforma de la CC a través del botón identificado
+              como Iniciar Matricula/Inscripción En esta parte del proceso, el
+              sistema le genera el código único del formulario - CUF - Tome nota
+              de ello y consérvelo para posteriores accesos
+            </Alert>
             <FormInput
               name="Rsocial"
               value={formData.Rsocial || ""}
@@ -243,12 +264,11 @@ export default function FormMatricula() {
               placeholder="SIGLA"
               helperText="Que representa el nombre de la Cooperativa"
             />
-
-            <Typography variant="body1" color="initial">
+            <Alert color="neutral">
               Datos del Domicilio PRINCIPAL - COMERCIAL Estos datos deben
               coincidir con los registrados en el Registro Único Tributario -
               DIAN
-            </Typography>
+            </Alert>
             <FormInput
               name="País"
               value={formData.Pais || ""}
@@ -275,13 +295,20 @@ export default function FormMatricula() {
               helperText="En la plataforma de la CC debe seleccionarlo entre las
                 alternativas que allí se presentan"
             />
-            <FormControl>
-              <FormLabel>Zona</FormLabel>
-              <RadioGroup defaultValue="outlined" name="radio-buttons-group">
-                <Radio value="Urbana" label="Urbana" variant="outlined" />
-                <Radio value="Rural" label="Rural" variant="outlined" />
-              </RadioGroup>
-            </FormControl>
+            <RadioCheck
+              label="Zona"
+              name="ubicacion"
+              options={[
+                {
+                  value: "urbana",
+                  label: "Urbana",
+                },
+                { value: "rural", label: "Rural" },
+              ]}
+              initialValue={formData.ubicacion}
+              onChange={handleRadioChange}
+            />
+
             <FormInput
               name="Cpostal"
               value={formData.Cpostal || ""}
@@ -290,25 +317,24 @@ export default function FormMatricula() {
               helperText="En la plataforma de la CC esta pregunta no es obligatoria, si lo
                 conoce es opcional responderlo"
             />
-            <FormControl>
-              <FormLabel>Ubicación</FormLabel>
-              <Select
-                defaultValue={"Oficina"}
-                name="target"
-                onChange={handleChange}
-              >
-                <Option value="Local">Local</Option>
-                <Option value="Oficina">Oficina</Option>
-                <Option value="LocalY">Local y oficina</Option>
-                <Option value="Fabrica">Fabrica</Option>
-                <Option value="Finca">Finca</Option>
-                <Option value="Vivienda">Vivienda</Option>
-              </Select>
-            </FormControl>
-            <Typography variant="body1" color="initial">
+            <CustomSelect
+              label="Ubicación"
+              name="ubicacion"
+              defaultValue={formData.ubicacion}
+              options={[
+                { value: "Local", label: "Local" },
+                { value: "Oficina", label: "Oficina" },
+                { value: "LocalY", label: "Local y oficina" },
+                { value: "Fabrica", label: "Fábrica" },
+                { value: "Finca", label: "Finca" },
+                { value: "Vivienda", label: "Vivienda" },
+              ]}
+              onChange={handleSelectChange}
+            />
+            <Alert color="neutral">
               Se requiere como mínimo un número telefónico fijo o celular para
               el envió de mensajes
-            </Typography>
+            </Alert>
             <FormInput
               name="telefono"
               value={formData.telefono || ""}
@@ -316,12 +342,24 @@ export default function FormMatricula() {
               placeholder="Teléfono"
             />
             <FormInput
+              name="telefono2"
+              value={formData.telefono2 || ""}
+              onChange={handleChange}
+              placeholder="Teléfono 2"
+            />
+            <FormInput
+              name="telefono3"
+              value={formData.telefono3 || ""}
+              onChange={handleChange}
+              placeholder="Teléfono 2"
+            />
+            <FormInput
               name="email"
               value={formData.email || ""}
               onChange={handleChange}
               placeholder="Correo Electrónico"
             />
-            <Typography variant="body1" color="initial">
+            <Alert color="neutral">
               De acuerdo con el artículo 291 del Código General del Proceso,
               “las personas jurídicas de derecho privado y los comerciantes
               inscritos en el registro mercantil deberán registrar en la Cámara
@@ -333,37 +371,47 @@ export default function FormMatricula() {
               domicilio principal oprima el botón copiar datos comerciales. En
               caso contrario debe diligenciar los mismos campos pero con la
               información para recibo de notificaciones judiciales
-            </Typography>
-            <FormControl>
-              <FormLabel>
-                De conformidad con lo establecido en el artículo 67 del Código
+            </Alert>
+            <RadioCheck
+              label="De conformidad con lo establecido en el artículo 67 del Código
                 de Procedimiento Administrativo y de lo Contencioso
                 Administrativo, autorizo para que me notifiquen personalmente a
-                través del correo electrónico aquí especificado * Si
-              </FormLabel>
-              <RadioGroup defaultValue="outlined" name="radio-buttons-group">
-                <Radio value="Si" label="Si" variant="outlined" />
-                <Radio value="No" label="No" variant="outlined" />
-              </RadioGroup>
-            </FormControl>
-            <FormControl>
-              <FormLabel>La sede administrativa es</FormLabel>
-              <Select
-                defaultValue={"Arriendo"}
-                name="sede"
-                onChange={handleChange}
-              >
-                <Option value="Arriendo">Arriendo</Option>
-                <Option value="Comodato">Comodato</Option>
-                <Option value="Propia">Propia</Option>
-                <Option value="Prestamo">Prestamo</Option>
-              </Select>
-            </FormControl>
+                través del correo electrónico aquí especificado * Si"
+              name="articulo67"
+              options={[
+                {
+                  value: "articulo67True",
+                  label: "Si",
+                },
+                { value: "articulo67False", label: "No" },
+              ]}
+              initialValue={formData.articulo67}
+              onChange={handleRadioChange}
+            />
+            <CustomSelect
+              label="Sede"
+              name="sede"
+              defaultValue={formData.sede}
+              options={[
+                { value: "Arriendo", label: "Arriendo" },
+                { value: "Comodato", label: "Comodato" },
+                { value: "Propia", label: "Propia" },
+                { value: "Préstamo", label: "Préstamo" },
+              ]}
+              onChange={handleSelectChange}
+            />
           </Stack>
         );
       case 3:
         return (
           <Stack spacing={2}>
+            <Alert color="neutral">
+              En los términos de la Ley, debe tomarse del balance de apertura o
+              de los Estados Financieros con corte a 31 de diciembre del año
+              anterior. Expresar las cifras en pesos colombianos. Datos sin
+              decimales. A traves del icono + debe adicionar la información
+              financiera, en la página de la CC de Cali.
+            </Alert>
             <FormControl>
               <FormLabel>
                 Estado situación financiera * <br />A continuación se presentan
@@ -665,6 +713,390 @@ export default function FormMatricula() {
             />
           </Stack>
         );
+      case 6:
+        return (
+          <Stack spacing={2}>
+            <Alert color="neutral">
+              Persona jurídica: Una vez verificada la información del Registro
+              Único Tributario (RUT), manifiesto que la persona jurídica que
+              represento tiene las siguientes responsabilidades, calidades y
+              atributos tributarios: Consulte aquí las responsabilidades
+              tributarias, con el fin de evitar inconsistencias en la asignación
+              de su NIT por parte de la DIAN
+            </Alert>
+            <RadioCheck
+              label="Confirmo que efectué la consulta de las responsabilidades tributarias en la herramienta que dispone la VUE*"
+              name="confirmo"
+              options={[
+                {
+                  value: "confirmoTrue",
+                  label: "Si",
+                },
+                { value: "confirmoFalse", label: "No" },
+              ]}
+              initialValue={formData.confirmo}
+              onChange={handleRadioChange}
+            />
+            <RadioCheck
+              label="Responsabilidad, calidad y atributo*
+Con base en la información acordada con el CONTADOR o el área que corresponda, indica la alternativa que les representa.
+
+En la serie de opciones o alternativas de respuesta que presenta la plataforma, algunos de los códigos no son consecutivos, al momento de la captura de información en la página de la CC"
+              name="responsabilidad"
+              options={[
+                {
+                  value: "option1",
+                  label: "Aporte especial para la administración de justicia",
+                },
+                {
+                  value: "option2",
+                  label: "Gravamen a los movimientos financieros",
+                },
+                { value: "option3", label: "Impuesto al patrimonio" },
+                {
+                  value: "option4",
+                  label:
+                    "Impuesta de renta y complementario - régimen especial",
+                },
+                {
+                  value: "option5",
+                  label:
+                    "Impuesta de renta y complementario - régimen ordinario",
+                },
+                { value: "option6", label: "Ingresos y patrimonio" },
+                {
+                  value: "option7",
+                  label: "Retención en la fuente a titulo de renta",
+                },
+                { value: "option8", label: "Retención timbre nacional" },
+                {
+                  value: "option9",
+                  label:
+                    "Retención en la fuente en el impuesto sobre las ventas",
+                },
+                { value: "option14", label: " Informante de exógena" },
+                {
+                  value: "option16",
+                  label:
+                    "Obligación facturar por ingresos bienes y/o servicios excluidos",
+                },
+                { value: "option18", label: " Precios de transferencia" },
+                {
+                  value: "option19",
+                  label: " Productos de vienes y o servicios excentos",
+                },
+                { value: "option20", label: " Obtención NIT Dto 3050 de 1997" },
+                {
+                  value: "option21",
+                  label:
+                    " Declara ingreso  o sali da del país de divisas o moneda legal",
+                },
+                {
+                  value: "option22",
+                  label:
+                    " Obligado a cumplir deberes formales a nombre de terceros,",
+                },
+                {
+                  value: "option23",
+                  label: " Declaración consolidada precios de transferencia",
+                },
+                {
+                  value: "option24",
+                  label: " Declaración consolidada precios de transferencia",
+                },
+                {
+                  value: "option26",
+                  label: "Declaración individual precios de transferencia",
+                },
+                {
+                  value: "option32",
+                  label: "Impuesto Nacional a la Gasolina y al ACPM",
+                },
+                { value: "option33", label: "Impuesto Nacional al consumo" },
+                { value: "option36", label: "Establecimiento permanente" },
+                {
+                  value: "option41",
+                  label: "Declaración anual de activos en el exterior",
+                },
+                { value: "option42", label: "Obligado a llevar contabilidad" },
+                {
+                  value: "option46",
+                  label: "IVA prestadores de servicios desde el exterior",
+                },
+                {
+                  value: "option47",
+                  label: "Régimen simplificado de tributación - Simple",
+                },
+                { value: "option48", label: "Impuesto sobre las ventas - IVA" },
+                { value: "option49", label: "No responsable de IVA" },
+                {
+                  value: "option50",
+                  label: "No responsable de consumo: Restaurantes y bares",
+                },
+                {
+                  value: "option51",
+                  label: "Agente retención de impoconsumo bienes inmuebles",
+                },
+                {
+                  value: "option53",
+                  label: "Persona Jurídica no responsable de IVA",
+                },
+                {
+                  value: "option54",
+                  label: "Intercambio Automático de Información CRS",
+                },
+                {
+                  value: "option55",
+                  label: "Informante Beneficiarios Finales",
+                },
+                { value: "option56", label: "Impuesto al Carbono" },
+                {
+                  value: "option57",
+                  label:
+                    "Persona Jurídica No Responsable del Impuesto al Consumo",
+                },
+              ]}
+              initialValue={formData.responsabilidad}
+              onChange={handleRadioChange}
+            />
+            <Alert color="neutral">ANEXO 5.</Alert>
+            <FormInput
+              name="cHombres"
+              value={formData.cHombres || ""}
+              onChange={handleChange}
+              placeholder="Número de mujeres"
+            />
+            <FormInput
+              name="cMujeres"
+              value={formData.cMujeres || ""}
+              onChange={handleChange}
+              placeholder="Número de hombres"
+            />
+            <FormInput
+              name="cAsociados"
+              value={formData.cAsociados || ""}
+              onChange={handleChange}
+              placeholder="Número de asociados"
+              helperText={"Numero de mujeres + número de hombres"}
+            />
+            <FormInput
+              name="entidad"
+              value={formData.entidad || ""}
+              onChange={handleChange}
+              placeholder="Entidad acreditada que impartió el curso básico de economía solidaria"
+              helperText={
+                "Indicar el nombre de la entidad que le certificó el curso referido"
+              }
+            />
+            <RadioCheck
+              label="¿Requiere autorización de registro?
+              (Aplica para las organizaciones especializadas de la economía solidaria)*"
+              name="autorización"
+              options={[
+                {
+                  value: "autorizaciónTrue",
+                  label: "Sí: por ejemplo Ahorro y crédito, las integrales..",
+                },
+                { value: "autorizaciónFalse", label: "No" },
+              ]}
+              initialValue={formData.autorización}
+              onChange={handleRadioChange}
+            />
+            <RadioCheck
+              label="¿Pertenece a un Gremio?*
+              En caso afirmativo debe indicar en la plataforma, el gremio al que pertenece"
+              name="gremio"
+              options={[
+                {
+                  value: "gremioTrue",
+                  label: "Sí",
+                },
+                { value: "gremioFalse", label: "No" },
+              ]}
+              initialValue={formData.gremio}
+              onChange={handleRadioChange}
+            />
+            {formData.gremio == "gremioTrue" && (
+              <FormInput
+                name="textGremio"
+                value={formData.textGremio || ""}
+                onChange={handleChange}
+                placeholder="Gremio al que pertenece"
+              />
+            )}
+            <RadioCheck
+              label="¿Ha remitido la documentación al ente de inspección, vigilancia y control?*"
+              name="documentacion"
+              options={[
+                {
+                  value: "documentacionTrue",
+                  label: "Sí",
+                },
+                { value: "documentacionFalse", label: "No" },
+              ]}
+              initialValue={formData.documentacion}
+              onChange={handleRadioChange}
+            />
+            <Alert color="neutral">
+              CLASE DE LA ENTIDAD SIN ÁNIMO DE LUCRO.
+            </Alert>
+            <RadioCheck
+              label="Clase de la entidad sin ánimo de lucro:"
+              name="claseEntidad"
+              options={[
+                {
+                  value: "claseEntidad1",
+                  label: "Cooperativa de trabajo asociado",
+                },
+                {
+                  value: "claseEntidadFalse",
+                  label:
+                    "Cooperativa de usuarios o de servicios a los asociados",
+                },
+                {
+                  value: "claseEntidad2",
+                  label: "Cooperativa especializada",
+                },
+                {
+                  value: "claseEntidad3",
+                  label: "Cooperativa Integral",
+                },
+                {
+                  value: "claseEntidad4",
+                  label:
+                    "Cooperativa Multiactiva: Esta opción permitiría realizar diferentes opciones de actividades económicas",
+                },
+              ]}
+              initialValue={formData.claseEntidad}
+              onChange={handleRadioChange}
+            />
+            <RadioCheck
+              label="Nombre de la entidad que ejerce inspección, vigilancia y control:*
+              Debe seleccionar entre las opciones: SUPERINTENDENCIA DE ECONOMÍA SOLIDARIA"
+              name="inspección"
+              options={[
+                {
+                  value: "inspección",
+                  label: "SUPERINTENDENCIA DE ECONOMÍA SOLIDARIA",
+                },
+              ]}
+              initialValue={formData.inspección}
+              onChange={handleRadioChange}
+            />
+            <Alert color="neutral">INFORMACIÓN ADICIONAL</Alert>
+            <RadioCheck
+              label="¿Personas vinculadas a su entidad presentan alguna discapacidad?"
+              name="discapacidad"
+              options={[
+                {
+                  value: "discapacidadTrue",
+                  label: "Si",
+                },
+                {
+                  value: "discapacidadFalse",
+                  label: "No",
+                },
+              ]}
+              initialValue={formData.discapacidad}
+              onChange={handleRadioChange}
+            />
+            <RadioCheck
+              label="¿Personas vinculadas a su entidad pertenecen a una etnia?*"
+              name="etnia"
+              options={[
+                {
+                  value: "etniaTrue",
+                  label:
+                    "Sí: En caso afirmativo en la plataforma de la CC, debe indicar cuál ETNIA",
+                },
+                {
+                  value: "etniaFalse",
+                  label: "No",
+                },
+              ]}
+              initialValue={formData.etnia}
+              onChange={handleRadioChange}
+            />
+            <RadioCheck
+              label="¿Personas vinculadas a su entidad pertenecen a un grupo LGBTI?*"
+              name="lgbti"
+              options={[
+                {
+                  value: "lgbtiTrue",
+                  label: "Si",
+                },
+                {
+                  value: "lgbtiFalse",
+                  label: "No",
+                },
+              ]}
+              initialValue={formData.lgbti}
+              onChange={handleRadioChange}
+            />
+            <RadioCheck
+              label="¿Cuenta con indicadores de gestión?"
+              name="indicadoresDeGestión"
+              options={[
+                {
+                  value: "indicadoresDeGestiónTrue",
+                  label: "Si",
+                },
+                {
+                  value: "indicadoresDeGestiónFalse",
+                  label: "No",
+                },
+              ]}
+              initialValue={formData.indicadoresDeGestión}
+              onChange={handleRadioChange}
+            />
+            <RadioCheck
+              label="¿Personas vinculadas a su entidad, tienen una condición de desplazados, víctimas o reinsertados?"
+              name="reinsertados"
+              options={[
+                {
+                  value: "desplazado",
+                  label: "Desplazado",
+                },
+                {
+                  value: "victima",
+                  label: "Victima",
+                },
+                {
+                  value: "reinsertado",
+                  label: "Reinsertado",
+                },
+                {
+                  value: "noAplica",
+                  label: "No aplica",
+                },
+              ]}
+              initialValue={formData.reinsertados}
+              onChange={handleRadioChange}
+            />
+            <Alert color="neutral">
+              BIENES RAÍCES Detalle los bienes raíces que posea en cumplimiento
+              del artículo 32 del Código de Comercio. Puede agregar más de un
+              bien raíz.
+            </Alert>
+            <MultiCheck
+              label="Información requerida por cada bien raíz a reportar*"
+              name="bienRaiz"
+              options={[
+                { value: "Matricula", label: "Matricula" },
+                { value: "Dirección", label: "Dirección" },
+                { value: "País", label: "País" },
+                { value: "Departamento", label: "Departamento" },
+                { value: "Ciudad", label: "Ciudad" },
+                { value: "Barrio", label: "Barrio" },
+              ]}
+              initialSelected={formData.bienRaiz}
+              onChange={handleMultiCheckChange}
+            />
+          </Stack>
+        );
+      case 7:
+        return <Stack spacing={2}></Stack>;
+
       default:
         return <Typography>Finalización del formulario.</Typography>;
     }

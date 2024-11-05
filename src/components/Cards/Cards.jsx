@@ -1,12 +1,10 @@
-import { Box, Typography, Button, Stack } from "@mui/joy";
+import { Box, Button, Stack, Typography } from "@mui/joy";
 import { styled } from "@mui/system";
-import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
-import * as XLSX from "xlsx"; // Importar XLSX para generar archivos Excel
-import { jsPDF } from "jspdf"; // Importar jsPDF para generar PDF
-import { useEffect, useState } from "react";
-import { firestore } from "src/services/firebase-config";
 import { doc, getDoc } from "firebase/firestore";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { firestore } from "src/services/firebase-config";
 
 const Card = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -16,13 +14,16 @@ const Card = styled(Box)(({ theme }) => ({
   width: "100%",
 }));
 
-const Cards = ({ title, document, category, backgroundColor, children }) => {
+const Cards = ({
+  title,
+  document,
+  category,
+  backgroundColor,
+  children,
+  onDownloadExcel,
+  onDownloadPDF,
+}) => {
   const navigate = useNavigate();
-
-  const handleCardClick = () => {
-    navigate(`/dashboard/course/${document}`);
-  };
-
   const [formData, setFormData] = useState({
     nombre: "",
     apellido: "",
@@ -32,7 +33,7 @@ const Cards = ({ title, document, category, backgroundColor, children }) => {
   const userId = localStorage.getItem("user");
 
   useEffect(() => {
-    // Al montar el componente, cargar datos guardados
+    // Cargar datos guardados
     async function loadData() {
       const docRef = doc(firestore, "formularios", userId);
       const docSnap = await getDoc(docRef);
@@ -43,26 +44,8 @@ const Cards = ({ title, document, category, backgroundColor, children }) => {
     loadData();
   }, [userId]);
 
-  // Función para descargar un archivo Excel
-  const downloadExcel = (event) => {
-    event.stopPropagation(); // Evitar que el clic en el botón propague el evento al Card
-
-    console.log(formData);
-    const worksheet = XLSX.utils.json_to_sheet([formData]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-    XLSX.writeFile(workbook, `${title}-data.xlsx`); // Nombre del archivo Excel
-  };
-
-  // Función para descargar un archivo PDF
-  const downloadPDF = (event) => {
-    event.stopPropagation(); // Evitar que el clic en el botón propague el evento al Card
-    const doc = new jsPDF();
-    doc.text(`Course: ${title}`, 10, 10); // Texto de ejemplo en el PDF
-    doc.text(`Category: ${category}`, 10, 20);
-
-    doc.save(`${title}-data.pdf`); // Nombre del archivo PDF
+  const handleCardClick = () => {
+    navigate(`/dashboard/course/${document}`);
   };
 
   return (
@@ -72,16 +55,23 @@ const Cards = ({ title, document, category, backgroundColor, children }) => {
         {category}
       </Typography>
       <Stack direction="row" spacing={2} mt={2}>
-        {/* Botón para descargar Excel */}
-
         {children}
-        <Button variant="outlined" onClick={downloadExcel}>
-          Descargar Excel
-        </Button>
-        {/* Botón para descargar PDF */}
-        <Button variant="outlined" onClick={downloadPDF}>
-          Descargar PDF
-        </Button>
+        {onDownloadExcel && (
+          <Button
+            variant="outlined"
+            onClick={(e) => onDownloadExcel(e, formData)}
+          >
+            Descargar Excel
+          </Button>
+        )}
+        {onDownloadPDF && (
+          <Button
+            variant="outlined"
+            onClick={(e) => onDownloadPDF(e, formData)}
+          >
+            Descargar PDF
+          </Button>
+        )}
       </Stack>
     </Card>
   );
@@ -89,12 +79,12 @@ const Cards = ({ title, document, category, backgroundColor, children }) => {
 
 Cards.propTypes = {
   title: PropTypes.string.isRequired,
-  children: PropTypes,
+  children: PropTypes.node,
   category: PropTypes.string.isRequired,
   document: PropTypes.string.isRequired,
-  students: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    .isRequired,
   backgroundColor: PropTypes.string,
+  onDownloadExcel: PropTypes.func,
+  onDownloadPDF: PropTypes.func,
 };
 
 export default Cards;

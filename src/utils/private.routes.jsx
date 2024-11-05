@@ -9,7 +9,7 @@ const PrivateRoutes = [
   },
 
   {
-    path: "course/Cooperativa",
+    path: "course/cooperativa",
     element: <FormMatricula />,
   },
   {

@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/joy";
 import { useEffect, useState } from "react";
-import PdfGeneratorReplica from "../Doc/PdfGenerator";
+import PdfGeneratorReplica from "../Doc/PdfModelo";
 
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { firestore } from "src/services/firebase-config";
