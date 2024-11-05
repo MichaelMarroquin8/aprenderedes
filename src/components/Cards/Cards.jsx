@@ -13,9 +13,10 @@ const Card = styled(Box)(({ theme }) => ({
   borderRadius: "20px",
   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
   cursor: "pointer",
+  width: "100%",
 }));
 
-const Cards = ({ title, document, category, backgroundColor }) => {
+const Cards = ({ title, document, category, backgroundColor, children }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -46,12 +47,7 @@ const Cards = ({ title, document, category, backgroundColor }) => {
   const downloadExcel = (event) => {
     event.stopPropagation(); // Evitar que el clic en el botón propague el evento al Card
 
-    const data = [
-      { Name: "John", Age: 28, Gender: "Male" },
-      { Name: "Jane", Age: 32, Gender: "Female" },
-    ]; // Datos de ejemplo, puedes cambiarlos con los datos que desees exportar
-
-    console.log(formData)
+    console.log(formData);
     const worksheet = XLSX.utils.json_to_sheet([formData]);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
@@ -77,6 +73,8 @@ const Cards = ({ title, document, category, backgroundColor }) => {
       </Typography>
       <Stack direction="row" spacing={2} mt={2}>
         {/* Botón para descargar Excel */}
+
+        {children}
         <Button variant="outlined" onClick={downloadExcel}>
           Descargar Excel
         </Button>
@@ -91,6 +89,7 @@ const Cards = ({ title, document, category, backgroundColor }) => {
 
 Cards.propTypes = {
   title: PropTypes.string.isRequired,
+  children: PropTypes,
   category: PropTypes.string.isRequired,
   document: PropTypes.string.isRequired,
   students: PropTypes.oneOfType([PropTypes.string, PropTypes.number])

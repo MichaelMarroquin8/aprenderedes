@@ -1,11 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "src/pages/Auth/Login";
+import UnAuthorized from "src/pages/Auth/UnAuthorized";
 import { NotFount } from "src/pages/NotFount";
+import Portfolio from "src/pages/Portfolio/Portfolio";
 import { Layout } from "src/pages/layout/layout";
 import PrivateRoutes from "./utils/private.routes";
-import Portfolio from "src/pages/Portfolio/Portfolio";
-import UnAuthorized from "src/pages/Auth/UnAuthorized";
-import MultiStepForm from "./components/Forms/multiStep";
 
 export const routesAIO = createBrowserRouter([
   {
@@ -25,11 +24,6 @@ export const routesAIO = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
-    errorElement: <NotFount />,
-  },
-  {
-    path: "/course/Cooperativa",
-    element: <MultiStepForm />,
     errorElement: <NotFount />,
   },
 ]);

@@ -20,6 +20,7 @@
     "firebase": "^10.13.1",
     "framer-motion": "^11.5.4",
     "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-pro-sidebar": "^1.1.0",

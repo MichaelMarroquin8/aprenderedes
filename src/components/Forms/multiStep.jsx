@@ -1,18 +1,19 @@
 import * as React from "react";
 import Check from "@mui/icons-material/Check";
 import {
+  Button,
   Card,
+  Input,
   List,
   ListItem,
   Stack,
-  ToggleButtonGroup,
+  Step,
+  StepIndicator,
+  Stepper,
   Typography,
+  Select,
+  Option,
 } from "@mui/joy";
-import Button from "@mui/joy/Button";
-import Input from "@mui/joy/Input";
-import Step from "@mui/joy/Step";
-import StepIndicator from "@mui/joy/StepIndicator";
-import Stepper from "@mui/joy/Stepper";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { firestore } from "src/services/firebase-config";
 
@@ -20,6 +21,9 @@ const steps = [
   "Primer paso",
   "Segundo paso",
   "Tercero paso",
+  "Cuarto paso",
+  "Quinto paso",
+  "Sexto paso",
   "Datos Personales",
   "Datos Empresa",
 ];
@@ -113,8 +117,9 @@ export default function MultiStepForm() {
                 encuentra registrada en alguna Cámara de Comercio del País.
               </ListItem>
               <ListItem>
-                Consulta por medio de este link
+                Consulta por medio de este link:{" "}
                 <a
+                  style={{ color: "blue" }}
                   href="https://www.ccc.org.co/sedevirtual/consulta-homonimia/"
                   target="_blank"
                 >
@@ -173,9 +178,87 @@ export default function MultiStepForm() {
           </Stack>
         )}
         {activeStep === 3 && (
+          <Stack spacing={2}>
+            <List marker={"upper-roman"}>
+              <ListItem>LLEVAR A CABO LA ASAMBLEA DE CONSTITUCIÓN</ListItem>
+              <ListItem>CONVOCAR A LOS ASOCIADOS:</ListItem>
+              <ListItem>
+                La cual consiste en CITAR a los asociados fundadores que mínimo
+                deben ser tres (3) asociados, definir sitio, lugar, hora y
+                objeto de la reunión.
+              </ListItem>
+              <ListItem>(Dibujo)</ListItem>
+            </List>
+          </Stack>
+        )}
+        {activeStep === 4 && (
+          <Stack spacing={2}>
+            <List marker={"upper-roman"}>
+              <ListItem>DESARROLLO DE LA ASAMBLEA DE CONSTITUCIÓN:</ListItem>
+              <ListItem nested>
+                <ListItem>
+                  Reunidos los asociados fundadores, definen el orden del día
+                  plasmado en un acta de constitución, que debe considerar los
+                  siguientes puntos:
+                </ListItem>
+                <List marker="circle">
+                  <ListItem>
+                    A-Nombramiento de Presidente y Secretario Ad-hoc.
+                  </ListItem>
+                  <ListItem>
+                    Aprobación, constitución de la Cooperativa.
+                  </ListItem>
+                  <ListItem>Aprobación de estatutos.</ListItem>
+                  <ListItem>Elección de Consejo de administración.</ListItem>
+                  <ListItem>Elección de Junta de vigilancia.</ListItem>
+                  <ListItem>Elección del Revisor Fiscal.</ListItem>
+                  <ListItem>Elección de Gerente.</ListItem>
+                  <ListItem>Aprobación del Acta.</ListItem>
+                </List>
+              </ListItem>
+            </List>
+          </Stack>
+        )}
+        {activeStep === 5 && (
+          <Stack spacing={2}>
+            <List marker={"upper-roman"}>
+              <ListItem>
+                Registrar la cooperativa en la Cámara de Comercio
+              </ListItem>
+              <ListItem>
+                Anexar los siguientes documentos: El acta de constitución
+              </ListItem>
+              <ListItem>
+                los aportes y la aceptación de cargos suscrito por el presidente
+                y el secretario de la asamblea y los integrantes de la
+                cooperativa
+              </ListItem>
+              <ListItem>
+                copia de los estatutos firmados por los asistentes a la asamblea
+              </ListItem>
+            </List>
+          </Stack>
+        )}
+        {activeStep === 6 && (
           <>
+            <Select defaultValue="CC">
+              <Option value="CC">Cédula de ciudadanía</Option>
+              <Option value="CE">Cédula de Extranjería</Option>
+              <Option value="PP">Pasaporte</Option>
+              <Option value="TI">Tarjeta de identidad</Option>
+              <Option value="PE">Permiso Especial de Permanencia</Option>
+              <Option value="PPT">Permiso de protección temporal</Option>
+            </Select>
             <Input
-              placeholder="Nombre"
+              placeholder="Numero de documento"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <Input
+              placeholder="Nombres"
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
@@ -183,16 +266,40 @@ export default function MultiStepForm() {
               margin="normal"
             />
             <Input
-              placeholder="Apellido"
+              placeholder="Apellidos"
               name="apellido"
               value={formData.apellido}
               onChange={handleChange}
               fullWidth
               margin="normal"
             />
+            <Input
+              placeholder="Teléfono"
+              name="Teléfono"
+              value={formData.telefono}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <Input
+              placeholder="Correo Electrónico"
+              name="Correo"
+              value={formData.email}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <Input
+              placeholder="Confirme el correo electrónico"
+              name="Correo2"
+              value={formData.cemail}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
           </>
         )}
-        {activeStep === 4 && (
+        {activeStep === 7 && (
           <>
             <Input
               placeholder="Nombre Empresa"
