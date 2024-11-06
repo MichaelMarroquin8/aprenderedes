@@ -101,7 +101,7 @@ const Dashboard = () => {
   const actaPDF = async (event) => {
     event.stopPropagation();
     const formData = await getActa(); // Obtener datos actualizados
-    if (formData) {
+    if (!formData) {
       pdfActa({
         data: formData,
       });
@@ -143,7 +143,7 @@ const Dashboard = () => {
   const constanciaAprobacionPDF = async (event) => {
     event.stopPropagation();
     const formData = await getConstanciaAprobacion(); // Obtener datos actualizados
-    if (formData) {
+    if (!formData) {
       pdfConstanciaAprobacion({
         data: formData,
       });
@@ -163,7 +163,7 @@ const Dashboard = () => {
   const constanciaGerentePDF = async (event) => {
     event.stopPropagation();
     const formData = await getConstanciaGerente(); // Obtener datos actualizados
-    if (formData) {
+    if (!formData) {
       pdfConstanciaGerente({
         data: formData,
       });

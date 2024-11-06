@@ -15,7 +15,7 @@ import {
   Step,
   StepIndicator,
   Stepper,
-  Typography
+  Typography,
 } from "@mui/joy";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import * as React from "react";
@@ -74,7 +74,7 @@ export default function FormMatricula() {
       }
     }
     loadData();
-  }, [userId]);
+  }, []);
 
   const handleNext = async () => {
     if (validateStep()) {

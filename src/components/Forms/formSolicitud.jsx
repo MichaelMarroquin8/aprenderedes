@@ -15,7 +15,7 @@ import {
   Step,
   StepIndicator,
   Stepper,
-  Typography
+  Typography,
 } from "@mui/joy";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import * as React from "react";

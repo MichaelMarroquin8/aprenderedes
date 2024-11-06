@@ -1,9 +1,9 @@
 import jsPDF from "jspdf";
 
-const PdfModelo = ({ data }) => {
+const pdfModelo = ({ data }) => {
   const doc = new jsPDF("p", "mm", "a4"); // Documento A4
-  const margin = 20; // Aumentar márgenes
-  let cursorY = margin; // Empezar desde el margen superior
+  const margin = 10;
+  let cursorY = 20;
 
   const pageHeight = doc.internal.pageSize.getHeight();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -18,37 +18,21 @@ const PdfModelo = ({ data }) => {
   const addJustifiedText = (
     text,
     x = margin,
-    width = pageWidth - 2 * margin, // Ajustar el ancho a los márgenes
+    width = 190,
     size = 12,
-    style = "normal",
+    style = `normal`,
     color = [0, 0, 0]
   ) => {
     setFont(size, style);
     doc.setTextColor(...color);
     const textLines = doc.splitTextToSize(text, width);
 
-    // Justificar manualmente las líneas de texto
     textLines.forEach((line) => {
       if (cursorY + 10 > pageHeight - margin) {
         doc.addPage(); // Añadir nueva página
         cursorY = margin; // Resetear el cursor al margen superior
       }
-
-      const lineWidth = doc.getTextWidth(line); // Obtener el ancho de la línea de texto
-      const spaceLeft = width - lineWidth; // Calcular el espacio disponible
-      const words = line.split(" "); // Dividir la línea en palabras
-      const numSpaces = words.length - 1; // Contar el número de espacios
-      const spaceWidth = numSpaces > 0 ? spaceLeft / numSpaces : 0; // Calcular el espacio entre palabras
-
-      // Reorganizar las palabras con el espacio calculado
-      let justifiedLine = words[0];
-      for (let i = 1; i < words.length; i++) {
-        justifiedLine += " ".repeat(Math.floor(spaceWidth)) + words[i];
-      }
-
-      // Imprimir la línea justificada
-      doc.text(justifiedLine, x, cursorY, { maxWidth: width });
-
+      doc.text(line, x, cursorY, { maxWidth: width, align: `justify` });
       cursorY += 8; // Espaciado entre líneas
     });
   };
@@ -70,7 +54,7 @@ const PdfModelo = ({ data }) => {
     cursorY += 10;
   };
 
-  // Títulos y capítulos
+  // Título principal centrado en amarillo
   addCenteredText(`FORMATO GUÍA ESTATUTOS COOPERATIVA`, 16, `bold`);
 
   // Título 'ESTATUTOS' centrado
@@ -253,7 +237,7 @@ d.	Fallecimiento.
   addJustifiedText(``);
   addJustifiedText(``);
   addJustifiedText(``);
-  doc.save(`Estatutos_Cooperativa_Replica.pdf`);
+  doc.save(`modelo.pdf`);
 };
 
-export default PdfModelo;
+export default pdfModelo;

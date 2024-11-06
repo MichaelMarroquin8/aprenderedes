@@ -7,7 +7,7 @@ const pdfSolicitud = () => {
 
   // Ajustar estilos globales
   const setFont = (size, style = "normal") => {
-    doc.setFont("times", style);
+    doc.setFont("Helvetica", style);
     doc.setFontSize(size);
   };
 
@@ -24,9 +24,10 @@ const pdfSolicitud = () => {
     doc.text(text, x, y, { align });
   };
 
+  cursorY += 25;
   // Título (Fecha y ciudad)
   addText("Fecha, ciudad", margin, cursorY);
-  cursorY += 20;
+  cursorY += 25;
 
   // Datos del destinatario
   addText("Doctor", margin, cursorY);
@@ -42,7 +43,7 @@ const pdfSolicitud = () => {
 
   // Saludo
   addText("Cordial Saludo:", margin, cursorY);
-  cursorY += 10;
+  cursorY += 15;
 
   // Cuerpo de la carta con texto justificado
   const bodyText = `Yo, _______________________, identificado con la cédula de ciudadanía No.
@@ -102,11 +103,11 @@ cumplir las disposiciones legales y estatutarias que rigen la organización.`;
 
   // Añadir el texto del cuerpo de la carta
   addJustifiedText(bodyText);
-  cursorY += 20;
+  cursorY += 25;
 
   // Despedida
   addText("Atentamente,", margin, cursorY);
-  cursorY += 20;
+  cursorY += 25;
 
   // Firma
   addText("Firma Gerente", margin, cursorY);
