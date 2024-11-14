@@ -9,7 +9,7 @@ import {
   Stepper,
   Textarea,
   Typography,
-} from "@mui/joy";
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import PdfGeneratorReplica from "../Doc/PdfModelo";
 

@@ -1,32 +1,27 @@
 import {
   Avatar,
   Box,
-  DialogTitle,
-  Drawer,
-  Dropdown,
+  Divider,
   IconButton,
-  ListDivider,
+  ListItemIcon,
   Menu,
-  MenuButton,
   MenuItem,
-  ModalClose,
   Stack,
   Tooltip,
   Typography,
-} from "@mui/joy";
+} from "@mui/material";
 import * as React from "react";
 
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import HelpRoundedIcon from "@mui/icons-material/HelpRounded";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 
 import { useDispatch, useSelector } from "react-redux";
 import { toggleColorMode } from "src/store/slices/userSlice";
 
+import logoSena from "src/assets/images/logo-sena.svg";
+
 // Importa la función de cierre de sesión de Firebase
+import { Logout } from "@mui/icons-material";
 import { signOut } from "firebase/auth";
 import { auth } from "src/services/firebase-config"; // Asegúrate de que el auth está correctamente configurado
 
@@ -51,7 +46,8 @@ function ColorSchemeToggle() {
 }
 
 export default function NavbarDash() {
-  const [open, setOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
   // Función para manejar el cierre de sesión
   const handleSignOut = async () => {
@@ -65,6 +61,13 @@ export default function NavbarDash() {
     }
   };
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "space-between" }}>
       <Stack
@@ -76,26 +79,10 @@ export default function NavbarDash() {
           display: { xs: "none", sm: "flex" },
         }}
       >
-        {/* Aquí puedes añadir más botones de navegación */}
+        <Avatar src={logoSena} sx={{ maxWidth: "60px", maxHeight: "60px" }} />
+        <Typography variant="logo">Aprende redes solidarias</Typography>
       </Stack>
-      <Box sx={{ display: { xs: "inline-flex", sm: "none" } }}>
-        <IconButton
-          variant="plain"
-          color="neutral"
-          onClick={() => setOpen(true)}
-        >
-          <MenuRoundedIcon />
-        </IconButton>
-        <Drawer
-          sx={{ display: { xs: "inline-flex", sm: "none" } }}
-          open={open}
-          onClose={() => setOpen(false)}
-        >
-          <ModalClose />
-          <DialogTitle>Aprende Redes Solidarias.</DialogTitle>
-          <Box sx={{ px: 1 }}>{/* <Navigation /> */}</Box>
-        </Drawer>
-      </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -105,67 +92,71 @@ export default function NavbarDash() {
         }}
       >
         <ColorSchemeToggle />
-        <Dropdown>
-          <MenuButton
-            variant="plain"
-            size="sm"
-            sx={{
-              maxWidth: "32px",
-              maxHeight: "32px",
-              borderRadius: "9999999px",
-            }}
+        <Tooltip title="Account settings">
+          <IconButton
+            onClick={handleClick}
+            size="small"
+            sx={{ ml: 2 }}
+            aria-controls={open ? "account-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
           >
             <Avatar
               src="https://i.pravatar.cc/40?img=2"
               srcSet="https://i.pravatar.cc/80?img=2"
               sx={{ maxWidth: "32px", maxHeight: "32px" }}
             />
-          </MenuButton>
-          <Menu
-            placement="bottom-end"
-            size="sm"
-            sx={{
-              zIndex: "99999",
-              p: 1,
-              gap: 1,
-              "--ListItem-radius": "var(--joy-radius-sm)",
-            }}
-          >
-            <MenuItem>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Avatar
-                  src="https://i.pravatar.cc/40?img=2"
-                  srcSet="https://i.pravatar.cc/80?img=2"
-                  sx={{ borderRadius: "50%" }}
-                />
-                <Box sx={{ ml: 1.5 }}>
-                  <Typography level="title-sm" textColor="text.primary">
-                    Rick Sanchez
-                  </Typography>
-                  <Typography level="body-xs" textColor="text.tertiary">
-                    rick@email.com
-                  </Typography>
-                </Box>
-              </Box>
-            </MenuItem>
-            <ListDivider />
-            <MenuItem>
-              <HelpRoundedIcon />
-              Ayuda
-            </MenuItem>
-            <MenuItem>
-              <SettingsRoundedIcon />
-              Configuración
-            </MenuItem>
-            <ListDivider />
-            {/* Menú para cerrar sesión */}
-            <MenuItem onClick={handleSignOut}>
-              <LogoutRoundedIcon />
-              Cerrar Sesión
-            </MenuItem>
-          </Menu>
-        </Dropdown>
+          </IconButton>
+        </Tooltip>
       </Box>
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&::before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        <MenuItem onClick={handleClose}>
+          <Avatar /> Name profile
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleSignOut}>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Cerrar Sesión
+        </MenuItem>
+      </Menu>
     </Box>
   );
 }

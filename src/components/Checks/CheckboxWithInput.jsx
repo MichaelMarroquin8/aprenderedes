@@ -1,4 +1,4 @@
-import { Checkbox, FormControl, FormLabel, Stack, Input } from "@mui/joy";
+import { Checkbox, FormControl, FormLabel, Stack, Input } from "@mui/material";
 import { useState, useEffect } from "react";
 
 function CheckboxWithInput({ label, name, initialValue = "", onChange }) {

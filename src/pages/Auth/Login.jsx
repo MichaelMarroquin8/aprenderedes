@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Input, Typography } from "@mui/joy";
+import { Alert, Box, Button, Input, Typography } from "@mui/material";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,

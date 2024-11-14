@@ -1,4 +1,3 @@
-import Check from "@mui/icons-material/Check";
 import {
   Alert,
   Button,
@@ -8,22 +7,20 @@ import {
   FormLabel,
   List,
   ListItem,
-  Radio,
-  RadioGroup,
   Snackbar,
   Stack,
   Step,
-  StepIndicator,
+  StepLabel,
   Stepper,
-  Typography
-} from "@mui/joy";
+  Typography,
+} from "@mui/material";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import * as React from "react";
 import { firestore } from "src/services/firebase-config";
 import MultiCheck from "../Checks/Checkbox";
 import CheckboxWithInput from "../Checks/CheckboxWithInput";
 import RadioCheck from "../Checks/RadioCheck";
-import CustomSelect from "../Selects/CustomSelect";
+import CustomAutocomplete from "../Selects/CustomSelect";
 import FormInput from "../TextFields/FormInput";
 
 const steps = [
@@ -37,7 +34,7 @@ const steps = [
   "FIRMA",
 ];
 
-export default function FormMatricula() {
+export default function FormCooperativa() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState({
     nombre: "",
@@ -102,8 +99,8 @@ export default function FormMatricula() {
     }));
   };
 
-  const handleSelectChange = (name, value) => {
-    console.log(name, value);
+  const handleSelectionTypeCo = (name, value) => {
+    console.log("Selected", name, "with value", value);
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -159,19 +156,48 @@ export default function FormMatricula() {
       case 0:
         return (
           <Stack spacing={2}>
-            <CustomSelect
+            <Alert severity="info">
+              Información correspondiente al representante de la cooperativa
+            </Alert>
+            <CustomAutocomplete
               label="Tipo de documento"
               name="typeId"
-              defaultValue={formData.typeId || " "}
               options={[
-                { value: "CC", label: "Cédula de ciudadanía" },
-                { value: "CE", label: "Cédula de Extranjería" },
-                { value: "PP", label: "Pasaporte" },
-                { value: "TI", label: "Tarjeta de identidad" },
-                { value: "PE", label: "Permiso Especial de Permanencia" },
-                { value: "PPT", label: "Permiso de protección temporal" },
+                {
+                  value: "CC",
+                  label: "Cédula de ciudadanía",
+                  tooltip: "Documento oficial",
+                },
+                {
+                  value: "CE",
+                  label: "Cédula de Extranjería",
+                  tooltip: "Documento para extranjeros",
+                },
+                {
+                  value: "PP",
+                  label: "Pasaporte",
+                  tooltip: "Para viajar internacionalmente",
+                },
+                {
+                  value: "TI",
+                  label: "Tarjeta de identidad",
+                  tooltip: "Documento para menores de edad",
+                },
+                {
+                  value: "PE",
+                  label: "Permiso Especial de Permanencia",
+                  tooltip: "Para extranjeros con permiso",
+                },
+                {
+                  value: "PPT",
+                  label: "Permiso de protección temporal",
+                  tooltip: "Permiso para refugiados",
+                },
               ]}
-              onChange={handleSelectChange}
+              onSelectionChange={(name, value) =>
+                handleSelectionTypeCo(name, value)
+              }
+              defaultO={formData.typeId}
             />
 
             <FormInput
@@ -227,12 +253,14 @@ export default function FormMatricula() {
               </ListItem>
               <ListItem>
                 <a href="https://www.ccc.org.co/sedevirtual/consulta-homonimia/">
-                  <strong color="info">Verificar Homonimia</strong>
+                  <Typography color="#2e6ca6">
+                    <strong>Verificar Homonimia</strong>
+                  </Typography>
                 </a>
               </ListItem>
               <ListItem>
                 Allí debe ingresar por el espacio: REGISTRO DE ENTIDADES DE LA
-                ECONOMIA SOLIDARIA
+                ECONOMÍA SOLIDARIA
               </ListItem>
             </List>
           </Stack>
@@ -240,15 +268,18 @@ export default function FormMatricula() {
       case 2:
         return (
           <Stack spacing={2}>
-            <Alert color="neutral">
+            <Alert severity="info">
               Ingrese en la plataforma de la CC a través del botón identificado
-              como Iniciar Matricula/Inscripción En esta parte del proceso, el
-              sistema le genera el código único del formulario - CUF - Tome nota
-              de ello y consérvelo para posteriores accesos
+              como Iniciar Matricula/Inscripción
+            </Alert>
+            <Alert severity="info">
+              En esta parte del proceso, el sistema le genera el código único
+              del formulario - CUF - Tome nota de ello y consérvelo para
+              posteriores accesos
             </Alert>
             <FormInput
-              name="Rsocial"
-              value={formData.Rsocial || ""}
+              name="rSocial"
+              value={formData.rSocial || ""}
               onChange={handleChange}
               placeholder="Razón Social"
               helperText="Nombre que le identificará, normalmente se inicia con la palabra
@@ -262,7 +293,7 @@ export default function FormMatricula() {
               placeholder="SIGLA"
               helperText="Que representa el nombre de la Cooperativa"
             />
-            <Alert color="neutral">
+            <Alert severity="info">
               Datos del Domicilio PRINCIPAL - COMERCIAL Estos datos deben
               coincidir con los registrados en el Registro Único Tributario -
               DIAN
@@ -315,10 +346,9 @@ export default function FormMatricula() {
               helperText="En la plataforma de la CC esta pregunta no es obligatoria, si lo
                 conoce es opcional responderlo"
             />
-            <CustomSelect
+            <CustomAutocomplete
               label="Ubicación"
               name="ubicacion"
-              defaultValue={formData.ubicacion}
               options={[
                 { value: "Local", label: "Local" },
                 { value: "Oficina", label: "Oficina" },
@@ -327,9 +357,13 @@ export default function FormMatricula() {
                 { value: "Finca", label: "Finca" },
                 { value: "Vivienda", label: "Vivienda" },
               ]}
-              onChange={handleSelectChange}
+              onSelectionChange={(name, value) =>
+                handleSelectionTypeCo(name, value)
+              }
+              defaultO={formData.ubicacion}
             />
-            <Alert color="neutral">
+
+            <Alert severity="info">
               Se requiere como mínimo un número telefónico fijo o celular para
               el envió de mensajes
             </Alert>
@@ -357,7 +391,7 @@ export default function FormMatricula() {
               onChange={handleChange}
               placeholder="Correo Electrónico"
             />
-            <Alert color="neutral">
+            <Alert severity="info">
               De acuerdo con el artículo 291 del Código General del Proceso,
               “las personas jurídicas de derecho privado y los comerciantes
               inscritos en el registro mercantil deberán registrar en la Cámara
@@ -386,24 +420,26 @@ export default function FormMatricula() {
               initialValue={formData.articulo67}
               onChange={handleRadioChange}
             />
-            <CustomSelect
+            <CustomAutocomplete
               label="Sede"
               name="sede"
-              defaultValue={formData.sede}
               options={[
                 { value: "Arriendo", label: "Arriendo" },
                 { value: "Comodato", label: "Comodato" },
                 { value: "Propia", label: "Propia" },
                 { value: "Préstamo", label: "Préstamo" },
               ]}
-              onChange={handleSelectChange}
+              onSelectionChange={(name, value) =>
+                handleSelectionTypeCo(name, value)
+              }
+              defaultO={formData.sede}
             />
           </Stack>
         );
       case 3:
         return (
           <Stack spacing={2}>
-            <Alert color="neutral">
+            <Alert severity="info">
               En los términos de la Ley, debe tomarse del balance de apertura o
               de los Estados Financieros con corte a 31 de diciembre del año
               anterior. Expresar las cifras en pesos colombianos. Datos sin
@@ -471,35 +507,35 @@ export default function FormMatricula() {
                   initialValue={formData.balanceSocial}
                   onChange={handleInputChange}
                 />
-                <FormControl>
-                  <FormLabel>Grupo NIIF</FormLabel>
-                  <RadioGroup
-                    defaultValue="outlined"
-                    name="radio-buttons-group"
-                  >
-                    <Radio
-                      value="Entidades"
-                      label="Entidades controlados por supersalud y supersubsidio"
-                      variant="outlined"
-                    />
-                    <Radio
-                      value="grupo1"
-                      label="Grupo 1: NIIF Plenas: corresponde a los que cumplen montos mínimos de acuerdo a sus estados financieros"
-                      variant="outlined"
-                    />
-                    <Radio
-                      value="grupo2"
-                      label="Grupo 2: PYMES: Las cooperativas aplican en este grupo"
-                      variant="outlined"
-                    />
-                    <Radio
-                      value="grupo3"
-                      label="Grupo 3: Personas naturales, jurídicas o microempresas"
-                      variant="outlined"
-                    />
-                  </RadioGroup>
-                </FormControl>
-                <Alert color="neutral">ESTADO DE RESULTADOS</Alert>
+                <RadioCheck
+                  label="Grupo NIIF"
+                  name="familiar"
+                  options={[
+                    {
+                      value: "entidades",
+                      label:
+                        "Entidades controlados por supersalud y supersubsidio",
+                    },
+                    {
+                      value: "grupo1",
+                      label:
+                        "Grupo 1: NIIF Plenas: corresponde a los que cumplen montos mínimos de acuerdo a sus estados financieros",
+                    },
+                    {
+                      value: "grupo2",
+                      label:
+                        "Grupo 2: PYMES: Las cooperativas aplican en este grupo",
+                    },
+                    {
+                      value: "grupo3",
+                      label:
+                        "Grupo 3: Personas naturales, jurídicas o microempresas",
+                    },
+                  ]}
+                  initialValue={formData.familiar}
+                  onChange={handleRadioChange}
+                />
+                <Alert severity="info">ESTADO DE RESULTADOS</Alert>
                 <FormLabel>
                   Valores requeridos en $ para cargar en la plataforma de la
                   CC.*
@@ -564,23 +600,29 @@ export default function FormMatricula() {
               name="estadoActual"
               options={[
                 {
-                  value: "Entidades",
-                  label: "Entidades controlados por supersalud y supersubsidio",
+                  value: "a   ctiva",
+                  label: "Activa : Indica que se encuentra en funcionamiento",
                 },
                 {
-                  value: "grupo1",
+                  value: "etapaPreoperativa",
                   label:
-                    "Grupo 1: NIIF Plenas: corresponde a los que cumplen montos mínimos de acuerdo a sus estados financieros",
+                    "Etapa preoperativa: Se refiere a que aún no ha entrado en funcionamiento la cooperativa",
                 },
                 {
-                  value: "grupo2",
-                  label:
-                    "Grupo 2: PYMES: Las cooperativas aplican en este grupo",
+                  value: "enConcordato",
+                  label: "En concordato : No aplica",
                 },
                 {
-                  value: "grupo3",
-                  label:
-                    "Grupo 3: Personas naturales, jurídicas o microempresas",
+                  value: "intervenida",
+                  label: "Intervenida: No aplica",
+                },
+                {
+                  value: "enLiquidación",
+                  label: "En liquidación: No aplica",
+                },
+                {
+                  value: "acuerdoDeReestructuración",
+                  label: "Acuerdo de reestructuración: No aplica",
                 },
               ]}
               initialValue={formData.estadoActual}
@@ -714,7 +756,7 @@ export default function FormMatricula() {
       case 6:
         return (
           <Stack spacing={2}>
-            <Alert color="neutral">
+            <Alert severity="info">
               Persona jurídica: Una vez verificada la información del Registro
               Único Tributario (RUT), manifiesto que la persona jurídica que
               represento tiene las siguientes responsabilidades, calidades y
@@ -857,7 +899,7 @@ En la serie de opciones o alternativas de respuesta que presenta la plataforma, 
               initialValue={formData.responsabilidad}
               onChange={handleRadioChange}
             />
-            <Alert color="neutral">ANEXO 5.</Alert>
+            <Alert severity="info">ANEXO 5.</Alert>
             <FormInput
               name="cHombres"
               value={formData.cHombres || ""}
@@ -935,7 +977,7 @@ En la serie de opciones o alternativas de respuesta que presenta la plataforma, 
               initialValue={formData.documentacion}
               onChange={handleRadioChange}
             />
-            <Alert color="neutral">
+            <Alert severity="info">
               CLASE DE LA ENTIDAD SIN ÁNIMO DE LUCRO.
             </Alert>
             <RadioCheck
@@ -981,7 +1023,7 @@ En la serie de opciones o alternativas de respuesta que presenta la plataforma, 
               initialValue={formData.inspección}
               onChange={handleRadioChange}
             />
-            <Alert color="neutral">INFORMACIÓN ADICIONAL</Alert>
+            <Alert severity="info">INFORMACIÓN ADICIONAL</Alert>
             <RadioCheck
               label="¿Personas vinculadas a su entidad presentan alguna discapacidad?"
               name="discapacidad"
@@ -1071,7 +1113,7 @@ En la serie de opciones o alternativas de respuesta que presenta la plataforma, 
               initialValue={formData.reinsertados}
               onChange={handleRadioChange}
             />
-            <Alert color="neutral">
+            <Alert severity="info">
               BIENES RAÍCES Detalle los bienes raíces que posea en cumplimiento
               del artículo 32 del Código de Comercio. Puede agregar más de un
               bien raíz.
@@ -1113,17 +1155,11 @@ En la serie de opciones o alternativas de respuesta que presenta la plataforma, 
   }
 
   return (
-    <Card style={{ marginTop: 20 }}>
-      <Stepper activeStep={activeStep} sx={{ width: "100%" }}>
-        {steps.map((step, index) => (
+    <Card style={{ marginTop: 20, padding: "20px" }}>
+      <Stepper nonLinear activeStep={activeStep} sx={{ width: "100%", mb: 2 }}>
+        {steps.map((step) => (
           <Step key={step}>
-            <StepIndicator
-              variant={activeStep <= index ? "soft" : "solid"}
-              color={activeStep < index ? "neutral" : "primary"}
-            >
-              {activeStep <= index ? index + 1 : <Check />}
-            </StepIndicator>
-            <Typography onClick={() => setActiveStep(index)}>{step}</Typography>
+            <StepLabel>{step}</StepLabel>
           </Step>
         ))}
       </Stepper>

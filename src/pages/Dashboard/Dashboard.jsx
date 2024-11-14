@@ -1,34 +1,23 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionGroup,
-  AccordionSummary,
-  Grid,
-  Tab,
-  tabClasses,
-  TabList,
-  TabPanel,
-  Tabs,
-  Typography,
-} from "@mui/joy";
-import * as XLSX from "xlsx";
-import { firestore } from "src/services/firebase-config";
-import { lazy, Suspense, useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { firestore } from "src/services/firebase-config";
+import * as XLSX from "xlsx";
 
+import Cards from "src/components/Cards/Cards";
 import PdfModelo from "src/components/Doc/PdfModelo";
 import pdfActa from "src/components/Doc/pdfActa";
-import pdfSolicitud from "src/components/Doc/pdfSolicitud";
-import pdfLink from "src/components/Doc/pdfLink";
 import pdfConstanciaAprobacion from "src/components/Doc/pdfConstanciaAprobacion";
 import pdfConstanciaGerente from "src/components/Doc/pdfConstanciaGerente";
+import pdfLink from "src/components/Doc/pdfLink";
+import pdfSolicitud from "src/components/Doc/pdfSolicitud";
 
-const LazyCourseCard = lazy(() => import("src/components/Cards/Cards"));
-
-const Dashboard = () => {
+export default function Dashboard() {
   const [categories, setCategories] = useState([]);
   const [forms, setForms] = useState([]);
-  const [tabValue, setTabValue] = useState("Generalidades");
+  const [tabValue, setTabValue] = useState(2);
 
   const userId = localStorage.getItem("user");
 
@@ -101,7 +90,8 @@ const Dashboard = () => {
   const actaPDF = async (event) => {
     event.stopPropagation();
     const formData = await getActa(); // Obtener datos actualizados
-    if (!formData) {
+    console.log(formData);
+    if (formData) {
       pdfActa({
         data: formData,
       });
@@ -143,7 +133,7 @@ const Dashboard = () => {
   const constanciaAprobacionPDF = async (event) => {
     event.stopPropagation();
     const formData = await getConstanciaAprobacion(); // Obtener datos actualizados
-    if (!formData) {
+    if (formData) {
       pdfConstanciaAprobacion({
         data: formData,
       });
@@ -163,7 +153,7 @@ const Dashboard = () => {
   const constanciaGerentePDF = async (event) => {
     event.stopPropagation();
     const formData = await getConstanciaGerente(); // Obtener datos actualizados
-    if (!formData) {
+    if (formData) {
       pdfConstanciaGerente({
         data: formData,
       });
@@ -173,168 +163,53 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
-      <Typography variant="h3" sx={{ mb: 4 }}>
-        Diligencia formularios
-      </Typography>
-      <Tabs value={tabValue} onChange={handleChange}>
-        <TabList
-          tabFlex={1}
-          disableUnderline
-          sx={{
-            p: 0.5,
-            gap: 0.5,
-            borderRadius: "xl",
-            bgcolor: "background.level1",
-            [`& .${tabClasses.root}[aria-selected="true"]`]: {
-              boxShadow: "sm",
-              bgcolor: "background.surface",
-            },
-          }}
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={tabValue}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+          sx={{ pb: 3 }}
         >
-          {categories.map((item) => (
+          {categories.map((item, index) => (
             <Tab
-              key={item.nameCategory}
-              value={item.nameCategory}
-              disableIndicator
-            >
-              {item.nameCategory}
-            </Tab>
+              key={index}
+              value={item.idCategory}
+              label={item.nameCategory}
+            />
           ))}
-        </TabList>
-        <Grid container spacing={3}>
-          {forms.map((form, index) => (
-            <TabPanel key={index} value={form.category}>
-              <Suspense fallback={<div>Loading...</div>}>
-                <LazyCourseCard
-                  document={form.document}
-                  title={form.nameForm}
-                  category={form.summary}
-                  backgroundColor="#FDECEC"
-                  onDownloadExcel={form.type === "excel" ? downloadExcel : null}
-                  onDownloadPDF={
-                    form.document === "modelo"
-                      ? modeloPDF
-                      : form.document === "acta"
-                      ? actaPDF
-                      : form.document === "solicitud"
-                      ? solicitudPDF
-                      : form.document === "link"
-                      ? linkPDF
-                      : form.document === "constanciaGerente"
-                      ? constanciaGerentePDF
-                      : form.document === "constanciaAprobacion"
-                      ? constanciaAprobacionPDF
-                      : null
-                  }
-                />
-              </Suspense>
-            </TabPanel>
-          ))}
-          <TabPanel value={"Capacitación"}>
-            <AccordionGroup>
-              <Accordion>
-                <AccordionSummary>
-                  TECNOLÓGICA TECNOLOGÍAS DE GESTIÓN ADMINISTRATIVA Y SERVICIOS
-                  FINANCIEROS
-                </AccordionSummary>
-                <AccordionDetails>
-                  <strong>DESCRIPCIÓN</strong>
-                  02 IDENTIFICAR LOS DIFERENTES TIPOS DE ORGANIZACIONES
-                  SOLIDARIAS DE ACUERDO CON LAS ALTERNATIVAS DE LOS GRUPOS DE
-                  INTERÉS, NORMATIVA VIGENTE Y UNIDAD ESTRATÉGICA DE NEGOCIO.
-                  <br />
-                  05 PROPONER ACCIONES DE MEJORA A LA ORGANIZACIÓN SELECCIONADA
-                  TENIENDO EN CUENTA LAS POLÍTICAS, NORMATIVA, ASPECTOS
-                  SOCIOECONÓMICOS, CULTURALES, AMBIENTALES Y TECNOLÓGICOS.
-                  <br />
-                  01 INTERPRETAR LOS COMPONENTES DE LA CULTURA, FILOSOFÍA Y
-                  PRINCIPIOS DE LA ECONOMÍA SOLIDARIA TENIENDO EN LA CUENTA LA
-                  NORMATIVA LEGAL VIGENTE Y EL CONTEXTO SOCIO ECONÓMICO DE LA
-                  POBLACIÓN OBJETO DE LA FORMACIÓN EN EL EMPRENDIMIENTO
-                  SOLIDARIO.
-                  <br />
-                  03 DETERMINAR EL TIPO DE ORGANIZACIÓN, ESTRUCTURA, CONTEXTO
-                  ADMINISTRATIVO, ÓRGANOS DE VIGILANCIA Y CONTROL, TENIENDO EN
-                  CUENTA LAS NECESIDADES DEL GRUPO DE INTERÉS Y LA NORMATIVA
-                  LEGAL VIGENTE.
-                  <br />
-                  04 VERIFICAR LOS REQUISITOS DE LA PROPUESTA DEL TIPO DE
-                  ORGANIZACIÓN SOLIDARIA, TENIENDO EN CUENTA LAS NECESIDADES DEL
-                  GRUPO DE INTERÉS, NORMATIVA VIGENTE Y LOS PRINCIPIOS DE
-                  ECONOMÍA SOLIDARIA Y DE ADMINISTRACIÓN.
-                </AccordionDetails>
-              </Accordion>
-              <Accordion>
-                <AccordionSummary>
-                  TECNOLÓGICA TECNOLOGÍAS DE GESTIÓN ADMINISTRATIVA Y SERVICIOS
-                  FINANCIEROS
-                </AccordionSummary>
-                <AccordionDetails>
-                  <strong>DESCRIPCIÓN</strong>
-                  02 IDENTIFICAR LOS DIFERENTES TIPOS DE ORGANIZACIONES
-                  SOLIDARIAS DE ACUERDO CON LAS ALTERNATIVAS DE LOS GRUPOS DE
-                  INTERÉS, NORMATIVA VIGENTE Y UNIDAD ESTRATÉGICA DE NEGOCIO.
-                  <br />
-                  05 PROPONER ACCIONES DE MEJORA A LA ORGANIZACIÓN SELECCIONADA
-                  TENIENDO EN CUENTA LAS POLÍTICAS, NORMATIVA, ASPECTOS
-                  SOCIOECONÓMICOS, CULTURALES, AMBIENTALES Y TECNOLÓGICOS.
-                  <br />
-                  01 INTERPRETAR LOS COMPONENTES DE LA CULTURA, FILOSOFÍA Y
-                  PRINCIPIOS DE LA ECONOMÍA SOLIDARIA TENIENDO EN LA CUENTA LA
-                  NORMATIVA LEGAL VIGENTE Y EL CONTEXTO SOCIO ECONÓMICO DE LA
-                  POBLACIÓN OBJETO DE LA FORMACIÓN EN EL EMPRENDIMIENTO
-                  SOLIDARIO.
-                  <br />
-                  03 DETERMINAR EL TIPO DE ORGANIZACIÓN, ESTRUCTURA, CONTEXTO
-                  ADMINISTRATIVO, ÓRGANOS DE VIGILANCIA Y CONTROL, TENIENDO EN
-                  CUENTA LAS NECESIDADES DEL GRUPO DE INTERÉS Y LA NORMATIVA
-                  LEGAL VIGENTE.
-                  <br />
-                  04 VERIFICAR LOS REQUISITOS DE LA PROPUESTA DEL TIPO DE
-                  ORGANIZACIÓN SOLIDARIA, TENIENDO EN CUENTA LAS NECESIDADES DEL
-                  GRUPO DE INTERÉS, NORMATIVA VIGENTE Y LOS PRINCIPIOS DE
-                  ECONOMÍA SOLIDARIA Y DE ADMINISTRACIÓN.
-                </AccordionDetails>
-              </Accordion>
-              <Accordion>
-                <AccordionSummary>
-                  TECNOLÓGICA TECNOLOGÍAS DE GESTIÓN ADMINISTRATIVA Y SERVICIOS
-                  FINANCIEROS
-                </AccordionSummary>
-                <AccordionDetails>
-                  <strong>DESCRIPCIÓN</strong>
-                  02 IDENTIFICAR LOS DIFERENTES TIPOS DE ORGANIZACIONES
-                  SOLIDARIAS DE ACUERDO CON LAS ALTERNATIVAS DE LOS GRUPOS DE
-                  INTERÉS, NORMATIVA VIGENTE Y UNIDAD ESTRATÉGICA DE NEGOCIO.
-                  <br />
-                  05 PROPONER ACCIONES DE MEJORA A LA ORGANIZACIÓN SELECCIONADA
-                  TENIENDO EN CUENTA LAS POLÍTICAS, NORMATIVA, ASPECTOS
-                  SOCIOECONÓMICOS, CULTURALES, AMBIENTALES Y TECNOLÓGICOS.
-                  <br />
-                  01 INTERPRETAR LOS COMPONENTES DE LA CULTURA, FILOSOFÍA Y
-                  PRINCIPIOS DE LA ECONOMÍA SOLIDARIA TENIENDO EN LA CUENTA LA
-                  NORMATIVA LEGAL VIGENTE Y EL CONTEXTO SOCIO ECONÓMICO DE LA
-                  POBLACIÓN OBJETO DE LA FORMACIÓN EN EL EMPRENDIMIENTO
-                  SOLIDARIO.
-                  <br />
-                  03 DETERMINAR EL TIPO DE ORGANIZACIÓN, ESTRUCTURA, CONTEXTO
-                  ADMINISTRATIVO, ÓRGANOS DE VIGILANCIA Y CONTROL, TENIENDO EN
-                  CUENTA LAS NECESIDADES DEL GRUPO DE INTERÉS Y LA NORMATIVA
-                  LEGAL VIGENTE.
-                  <br />
-                  04 VERIFICAR LOS REQUISITOS DE LA PROPUESTA DEL TIPO DE
-                  ORGANIZACIÓN SOLIDARIA, TENIENDO EN CUENTA LAS NECESIDADES DEL
-                  GRUPO DE INTERÉS, NORMATIVA VIGENTE Y LOS PRINCIPIOS DE
-                  ECONOMÍA SOLIDARIA Y DE ADMINISTRACIÓN.
-                </AccordionDetails>
-              </Accordion>
-            </AccordionGroup>
-          </TabPanel>
-        </Grid>
-      </Tabs>
-    </div>
+        </Tabs>
+      </Box>
+      {forms.map((form, index) => (
+        <Box
+          key={index}
+          sx={{ display: form.category === tabValue ? "block" : "none" }}
+        >
+          <Cards
+            index={form.category}
+            value={form.category}
+            document={form.document}
+            title={form.nameForm}
+            category={form.summary}
+            onDownloadExcel={form.type === "excel" ? downloadExcel : null}
+            onDownloadPDF={
+              form.document === "modelo"
+                ? modeloPDF
+                : form.document === "acta"
+                ? actaPDF
+                : form.document === "solicitud"
+                ? solicitudPDF
+                : form.document === "link"
+                ? linkPDF
+                : form.document === "constanciaGerente"
+                ? constanciaGerentePDF
+                : form.document === "constanciaAprobacion"
+                ? constanciaAprobacionPDF
+                : null
+            }
+          />
+        </Box>
+      ))}
+    </Box>
   );
-};
-
-export default Dashboard;
+}

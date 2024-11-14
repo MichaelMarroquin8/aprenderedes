@@ -1,6 +1,6 @@
 import { ListActionTypes } from "@mui/base/useList";
-import JoyMenu from "@mui/joy/Menu";
-import MenuItem from "@mui/joy/MenuItem";
+import JoyMenu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import * as React from "react";
 
 export default function Menu(props) {
@@ -83,7 +83,7 @@ export default function Menu(props) {
           }
           return React.cloneElement(menuItem, { key: label });
         })}
-      </JoyMenu>
+      </materialMenu>
     </React.Fragment>
   );
 }

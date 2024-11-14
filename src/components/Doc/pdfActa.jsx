@@ -1,7 +1,8 @@
+import dayjs from "dayjs";
 import jsPDF from "jspdf";
 
-const PdfActa = () => {
-  const doc = new jsPDF("p", "mm", "a4");
+const PdfActa = ({ data }) => {
+  const doc = new jsPDF(`p`, `mm`, `a4`);
   const marginLeft = 30;
   const marginRight = 30;
   const lineHeight = 8;
@@ -11,8 +12,8 @@ const PdfActa = () => {
   let cursorY = 20;
 
   // Configuración de fuente
-  const setFont = (size, style = "normal") => {
-    doc.setFont("Helvetica", style);
+  const setFont = (size, style = `normal`) => {
+    doc.setFont(`Helvetica`, style);
     doc.setFontSize(size);
   };
 
@@ -28,13 +29,13 @@ const PdfActa = () => {
   // Función para simular justificación de texto
   const addJustifiedText = (text, size = 12) => {
     setFont(size);
-    const words = text.split(" ");
-    let line = "";
+    const words = text.split(` `);
+    let line = ``;
     let lineWidth = 0;
 
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
-      const wordWidth = doc.getTextWidth(word + " ");
+      const wordWidth = doc.getTextWidth(word + ` `);
 
       if (lineWidth + wordWidth > contentWidth) {
         // Si la línea excede el ancho del contenido, justificarla
@@ -46,11 +47,11 @@ const PdfActa = () => {
         checkAddPage();
 
         // Nueva línea con la palabra que no cabía
-        line = word + " ";
+        line = word + ` `;
         lineWidth = wordWidth;
       } else {
         // Agregar palabra a la línea actual
-        line += word + " ";
+        line += word + ` `;
         lineWidth += wordWidth;
       }
     }
@@ -65,14 +66,116 @@ const PdfActa = () => {
     }
   };
 
+  const addPeopleTable = (people) => {
+    const columnWidth = contentWidth / 2; // Dividir el contenido en 2 columnas (persona principal y suplente)
+
+    // Dibujar los encabezados de la tabla
+    setFont(12, "bold");
+    doc.text("Principal", marginLeft, cursorY);
+    doc.text("Suplente", marginLeft + columnWidth, cursorY);
+    cursorY += lineHeight;
+
+    setFont(12); // Cambiar a fuente normal
+
+    // Recorrer los datos de personas
+    people.forEach((person) => {
+      // Datos de la persona principal
+      const personaName = person.nombre || "N/A";
+      const personaCC = person.cc || "N/A";
+      const personaFecha = person.fecha || "N/A";
+
+      // Datos del suplente
+      const suplenteName = person.nombre_suplente || "N/A";
+      const suplenteCC = person.cc_suplente || "N/A";
+      const suplenteFecha = person.fecha_suplente || "N/A";
+
+      // Dibujar la columna de la persona principal
+      doc.text("Nombre: " + personaName, marginLeft, cursorY);
+      doc.text("Cédula: " + personaCC, marginLeft, cursorY + lineHeight);
+      doc.text("Fecha: " + personaFecha, marginLeft, cursorY + 2 * lineHeight);
+
+      // Dibujar la columna del suplente
+      doc.text("Nombre: " + suplenteName, marginLeft + columnWidth, cursorY);
+      doc.text(
+        "Cédula: " + suplenteCC,
+        marginLeft + columnWidth,
+        cursorY + lineHeight
+      );
+      doc.text(
+        "Fecha: " + suplenteFecha,
+        marginLeft + columnWidth,
+        cursorY + 2 * lineHeight
+      );
+
+      cursorY += 3 * lineHeight; // Saltar espacio para la siguiente persona
+
+      // Verificar si se necesita agregar una nueva página
+      checkAddPage();
+    });
+  };
+
+  // Aquí agregas la tabla con las personas
+  const people = data.personas; // Accede a las personas dentro de data
+
+  const addPeopleTable2 = (people2) => {
+    const columnWidth = contentWidth / 2; // Dividir el contenido en 2 columnas (persona principal y suplente)
+
+    // Dibujar los encabezados de la tabla
+    setFont(12, "bold");
+    doc.text("Principal", marginLeft, cursorY);
+    doc.text("Suplente", marginLeft + columnWidth, cursorY);
+    cursorY += lineHeight;
+
+    setFont(12); // Cambiar a fuente normal
+
+    // Recorrer los datos de personas
+    people2.forEach((person2) => {
+      // Datos de la persona principal
+      const personaName = person2.nombre2 || "N/A";
+      const personaCC = person2.cc2 || "N/A";
+      const personaFecha = person2.fecha2 || "N/A";
+
+      // Datos del suplente
+      const suplenteName = person2.nombre_suplente2 || "N/A";
+      const suplenteCC = person2.cc_suplente2 || "N/A";
+      const suplenteFecha = person2.fecha_suplente2 || "N/A";
+
+      // Dibujar la columna de la persona principal
+      doc.text("Nombre: " + personaName, marginLeft, cursorY);
+      doc.text("Cédula: " + personaCC, marginLeft, cursorY + lineHeight);
+      doc.text("Fecha: " + personaFecha, marginLeft, cursorY + 2 * lineHeight);
+
+      // Dibujar la columna del suplente
+      doc.text("Nombre: " + suplenteName, marginLeft + columnWidth, cursorY);
+      doc.text(
+        "Cédula: " + suplenteCC,
+        marginLeft + columnWidth,
+        cursorY + lineHeight
+      );
+      doc.text(
+        "Fecha: " + suplenteFecha,
+        marginLeft + columnWidth,
+        cursorY + 2 * lineHeight
+      );
+
+      cursorY += 3 * lineHeight; // Saltar espacio para la siguiente persona
+
+      // Verificar si se necesita agregar una nueva página
+      checkAddPage();
+    });
+  };
+
+  // Aquí agregas la tabla con las personas
+  const people2 = data.personas2; // Accede a las personas dentro de data
+
   // Función para justificar una línea de texto
   const justifyLine = (line, lineWidth, contentWidth) => {
-    const words = line.trim().split(" ");
+    const words = line.trim().split(` `);
     const numSpaces = words.length - 1;
     if (numSpaces > 0) {
       const extraSpace = (contentWidth - lineWidth) / numSpaces;
       return words.join(
-        " ".repeat(Math.ceil(extraSpace / doc.getTextWidth(" ")))
+        ` `.repeat(Math.ceil(extraSpace / doc.getTextWidth(` `)))
       );
     }
     return line;
@@ -80,8 +183,8 @@ const PdfActa = () => {
 
   // Añadir título centrado en negrilla
   const addCenteredBoldTitle = (text, size = 14) => {
-    setFont(size, "bold");
-    doc.text(text, pageWidth / 2, cursorY, { align: "center" });
+    setFont(size, `bold`);
+    doc.text(text, pageWidth / 2, cursorY, { align: `center` });
     cursorY += lineHeight + 2;
 
     // Verificar si se necesita una nueva página
@@ -89,8 +192,8 @@ const PdfActa = () => {
   };
 
   const addSubtitle = (text, size = 14) => {
-    setFont(size, "normal");
-    doc.text(text, pageWidth / 2, cursorY, { align: "center" });
+    setFont(size, `normal`);
+    doc.text(text, pageWidth / 2, cursorY, { align: `center` });
     cursorY += lineHeight + 2;
 
     // Verificar si se necesita una nueva página
@@ -99,12 +202,12 @@ const PdfActa = () => {
 
   // Contenido del documento replicando el estilo del ejemplo
   cursorY += 20;
-  addCenteredBoldTitle("ACTA DE CONSTITUCIÓN", 12);
+  addCenteredBoldTitle(`ACTA DE CONSTITUCIÓN`, 12);
 
   cursorY += 8;
 
   addJustifiedText(
-    `En la ciudad de _________- Departamento ____________, a los _____ días del mes de __________ de _____, siendo las _______ , nosotros los abajo firmantes, debidamente constituidos, domiciliados en el municipio de_____________ Departamento del _________, República de Colombia, mayores de 18 años, actuando en nuestro propio nombre, e instalados en Asamblea de constitución, hemos acordado lo siguiente:`
+    `En la ciudad de ${data.ciudad}- Departamento ${data.departamento}, a los ${data.dia} días del mes de ${data.mesName} de ${data.cooperativaName}, siendo las ${data.hora} , nosotros los abajo firmantes, debidamente constituidos, domiciliados en el municipio de ${data.municipio} Departamento del ${data.departamento}, República de Colombia, mayores de 18 años, actuando en nuestro propio nombre, e instalados en Asamblea de constitución, hemos acordado lo siguiente:`
   );
 
   cursorY += 5;
@@ -123,16 +226,16 @@ const PdfActa = () => {
   addJustifiedText(`8. Aprobación del Acta.`);
 
   cursorY += 8;
-  addSubtitle("DESARROLLO", 12);
+  addSubtitle(`DESARROLLO`, 12);
 
   cursorY += 5;
   addJustifiedText(
-    `1. Se designó por unanimidad como PRESIDENTE de la sesión a y como SECRETARIO a ___________________ Y _______________________ respectivamente, para dirigir la presente Asamblea de constitución. Se deja constancia de que las anteriores personas manifestaron la aceptación a sus respectivos cargos.`
+    `1. Se designó por unanimidad como PRESIDENTE de la sesión a y como SECRETARIO a ${data.nameBoss} Y ${data.nameSubBoss} respectivamente, para dirigir la presente Asamblea de constitución. Se deja constancia de que las anteriores personas manifestaron la aceptación a sus respectivos cargos.`
   );
 
   cursorY += 5;
   addJustifiedText(
-    `2. Declarar constituida por unanimidad hoy ___ del mes de _________ del año ________ la persona jurídica que se denominará COOPERATIVA_________________________, sin ánimo de lucro, con domicilio en el municipio de __________, Departamento del ___________, República de Colombia, la cual se forma inicialmente por los asociados que hacen parte de la presente acta.`
+    `2. Declarar constituida por unanimidad hoy ${data.dia} del mes de ${data.mesName} del año ${data.año} la persona jurídica que se denominará COOPERATIVA ${data.nameCooperativa}, sin ánimo de lucro, con domicilio en el municipio de ${data.municipio}, Departamento del ${data.departamento}, República de Colombia, la cual se forma inicialmente por los asociados que hacen parte de la presente acta.`
   );
 
   cursorY += 5;
@@ -146,7 +249,7 @@ const PdfActa = () => {
   );
 
   cursorY += 5;
-  addJustifiedText(`mas`);
+  addPeopleTable(people);
 
   cursorY += 5;
   addJustifiedText(
@@ -154,31 +257,49 @@ const PdfActa = () => {
   );
 
   cursorY += 5;
-  addJustifiedText(`mas`);
+  addPeopleTable2(people2);
 
   cursorY += 5;
   addJustifiedText(
-    `6. La asamblea de constitución eligió por unanimidad como Revisor Fiscal a _____________, con TP. ________ y cédula de ciudadanía ________________, expedida el día ______del mes________ del año_______, De igual forma, manifestó aceptar la designación.`
+    `6. La asamblea de constitución eligió por unanimidad como Revisor Fiscal a ${
+      data.revisorFiscal
+    }, con TP. ${data.revisorFiscalTP} y cédula de ciudadanía ${
+      data.revisorFiscalCC
+    }, expedida el día ${dayjs(data.expediciónCC).format(
+      "DD"
+    )} del mes ${dayjs(data.expediciónCC).format("MMMM")} del año ${dayjs(
+      data.expediciónCC
+    ).format("YYYY")} , De igual forma, manifestó aceptar la designación.`
   );
 
   cursorY += 5;
   addJustifiedText(
-    `7. El Consejo de Administración elegido se reunió en forma separada y nombró por unanimidad como Gerente a: _____________________ con cédula de ciudadanía No ______________, expedida el día ______del mes________ del año_______, quien estando presente manifiesta la aceptación de la designación del cargo.`
+    `7. El Consejo de Administración elegido se reunió en forma separada y nombró por unanimidad como Gerente a: ${
+      data.gerente
+    } con cédula de ciudadanía No ${data.gerenteCC}, expedida el día ${dayjs(
+      data.expediciónCCG
+    ).format("DD")} del mes ${dayjs(data.expediciónCCG).format(
+      "MMMM"
+    )} del año ${dayjs(data.expediciónCCG).format(
+      "YYYY"
+    )}, quien estando presente manifiesta la aceptación de la designación del cargo.`
   );
 
   cursorY += 5;
   addJustifiedText(
-    `8. La presente acta fue leída y aprobada por unanimidad, siendo las ____ _m y en constancia se firma:`
+    `8. La presente acta fue leída y aprobada por unanimidad, siendo las ${data.cooperativaName} y en constancia se firma:`
   );
 
   cursorY += 5;
   addJustifiedText(
     `________________________               ________________________`
   );
-  addJustifiedText(`Presidente Ad-hoc                                  Secretario Ad-hoc`);
+  addJustifiedText(
+    `Presidente Ad-hoc                                  Secretario Ad-hoc`
+  );
 
   // Guardar PDF
-  doc.save("Acta.pdf");
+  doc.save(`Acta.pdf`);
 };
 
 export default PdfActa;

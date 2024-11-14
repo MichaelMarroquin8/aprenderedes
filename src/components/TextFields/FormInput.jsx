@@ -1,7 +1,13 @@
-import { FormControl, FormHelperText, FormLabel, Input, Stack } from "@mui/joy";
+import {
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Stack,
+} from "@mui/material";
 import PropTypes from "prop-types";
 
-function FormInput({ name, value, onChange, placeholder, helperText }) {
+function FormInput({ name, value, onChange, placeholder, helperText, type }) {
   return (
     <Stack spacing={1} sx={{ pb: 1.8 }}>
       <FormControl>
@@ -11,6 +17,7 @@ function FormInput({ name, value, onChange, placeholder, helperText }) {
           value={value || ""}
           onChange={onChange}
           placeholder={placeholder}
+          type={type}
           fullWidth
         />
         {helperText && <FormHelperText>{helperText}</FormHelperText>}
@@ -20,6 +27,7 @@ function FormInput({ name, value, onChange, placeholder, helperText }) {
 }
 
 FormInput.propTypes = {
+  type: PropTypes.string,
   name: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,

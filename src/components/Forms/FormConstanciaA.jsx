@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 const steps = ["Constancia Gerente Pago Aportes"];
 
-export default function FormConstanciaG() {
+export default function FormConstanciaA() {
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -45,7 +45,7 @@ export default function FormConstanciaG() {
     async function loadData() {
       setLoading(true);
       try {
-        const docRef = doc(firestore, "constanciaGerente", userId);
+        const docRef = doc(firestore, "constanciaAprobacion", userId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFormData(docSnap.data());
@@ -93,13 +93,15 @@ export default function FormConstanciaG() {
       // Establecer la fecha de hoy al guardar los datos
       const updatedFormData = {
         ...formData,
-        date: dayjs().format("DD/MM/YYYY"), // Establecer la fecha actual aquí
+        dia: dayjs().format("DD"),
+        mes: dayjs().format("MM"),
+        mesName: dayjs().format("MMMM"),
+        año: dayjs().format("YYYY"),
+        date: dayjs().toISOString(), // Almacenar la fecha como cadena ISO
       };
-
-      console.log(updatedFormData); // Imprime los datos actualizados, incluyendo la fecha
-
+  
       await setDoc(
-        doc(firestore, "constanciaGerente", userId),
+        doc(firestore, "constanciaAprobacion", userId),
         updatedFormData,
         {
           merge: true, // Merge para evitar sobrescribir datos previos
@@ -110,13 +112,11 @@ export default function FormConstanciaG() {
       setError("Error guardando los datos. Por favor, intente nuevamente.");
     }
   };
+  
 
   const validateStep = () => {
-    const { cooperativaName, cantidadE, cantidadN, ciudad } = formData;
-    if (
-      activeStep === 0 &&
-      (!cooperativaName || !cantidadE || !cantidadN || !ciudad)
-    ) {
+    const { cooperativaName, ciudad } = formData;
+    if (activeStep === 0 && (!cooperativaName || !ciudad)) {
       setError(
         "Por favor, complete todos los campos obligatorios correctamente."
       );
@@ -136,18 +136,6 @@ export default function FormConstanciaG() {
               value={formData.cooperativaName || ""}
               onChange={handleChange}
               placeholder="Razón social"
-            />
-            <FormInput
-              name="cantidadE"
-              value={formData.cantidadE || ""}
-              onChange={handleChange}
-              placeholder="Cantidad que han aportado todos los asociados a la cooperativa en partes iguales"
-            />
-            <FormInput
-              name="cantidadN"
-              value={formData.cantidadN || ""}
-              onChange={handleChange}
-              placeholder="Cantidad en números que han aportado todos los asociados a la cooperativa en partes iguales"
             />
             <FormInput
               name="ciudad"

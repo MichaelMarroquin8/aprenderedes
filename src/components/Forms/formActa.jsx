@@ -1,53 +1,44 @@
-import Check from "@mui/icons-material/Check";
 import {
   Alert,
   Button,
   Card,
   CircularProgress,
-  FormControl,
   FormLabel,
-  List,
-  ListItem,
-  Radio,
-  RadioGroup,
   Snackbar,
   Stack,
   Step,
-  StepIndicator,
+  StepLabel,
   Stepper,
   Typography,
-} from "@mui/joy";
+} from "@mui/material";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import * as React from "react";
 import { firestore } from "src/services/firebase-config";
-import MultiCheck from "../Checks/Checkbox";
-import CheckboxWithInput from "../Checks/CheckboxWithInput";
-import RadioCheck from "../Checks/RadioCheck";
-import CustomSelect from "../Selects/CustomSelect";
 import FormInput from "../TextFields/FormInput";
 
-const steps = [
-  "Datos del solicitante",
-  "INSCRIPCIÓN ESAL",
-  "Iniciar Matricula/Inscripción",
-  "Información Financiera",
-  "Estado ACTUAL",
-  "ACTIVIDAD ECONÓMICA",
-  "RESPONSABILIDADES TRIBUTARIAS",
-  "FIRMA",
-];
+import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
+import DynamicForm from "../TextFields/DynamicForm";
+import DynamicForm2 from "../TextFields/DynamicForm2";
+import FormDatePicker from "../Datepickers/FormDatePicker";
 
-export default function FormMatricula() {
+const steps = ["ACTA DE CONSTITUCIÓN"];
+
+export default function FormActa() {
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = React.useState(0);
+
   const [formData, setFormData] = React.useState({
-    nombre: "",
-    apellido: "",
-    empresa: "",
-    nit: "",
-    id: "",
-    telefono: "",
-    email: "",
-    cemail: "",
+    nameDestinatario: "",
+    date: dayjs(),
+    nameCCC: "",
+    ciudad: "",
+    departamento: "",
+    name: "",
+    cc: "",
+    cooperativaName: "",
+    personas: [{ nombre: "", cc: "", fecha: "" }],
+    personas2: [{ nombre: "", cc: "", fecha: "" }],
   });
 
   const [loading, setLoading] = React.useState(true);
@@ -60,7 +51,7 @@ export default function FormMatricula() {
     async function loadData() {
       setLoading(true);
       try {
-        const docRef = doc(firestore, "formularios", userId);
+        const docRef = doc(firestore, "acta", userId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFormData(docSnap.data());
@@ -82,6 +73,7 @@ export default function FormMatricula() {
       if (activeStep < steps.length - 1) {
         setActiveStep((prevStep) => prevStep + 1);
       } else {
+        navigate("/dashboard");
         setShowSnackbar(true);
       }
     }
@@ -102,39 +94,29 @@ export default function FormMatricula() {
     }));
   };
 
-  const handleSelectChange = (name, value) => {
-    console.log(name, value);
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   const handleInputChange = (name, value) => {
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleRadioChange = (name, value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleMultiCheckChange = (name, selectedOptions) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: selectedOptions,
+      [name]: value, // Actualiza personas2 en el estado
     }));
   };
 
   const saveData = async () => {
+    console.log(dayjs().format("MMMM"));
     try {
-      await setDoc(doc(firestore, "formularios", userId), formData, {
-        merge: true,
+      // Establecer la fecha de hoy al guardar los datos
+      const updatedFormData = {
+        ...formData,
+        hora: dayjs().format("HH"),
+        dia: dayjs().format("DD"),
+        mes: dayjs().format("MM"),
+        mesName: dayjs().format("MMMM"),
+        año: dayjs().format("YYYY"),
+        date: dayjs().toISOString(), // Almacenar la fecha como cadena ISO
+      };
+
+      await setDoc(doc(firestore, "acta", userId), updatedFormData, {
+        merge: true, // Merge para evitar sobrescribir datos previos
       });
     } catch (error) {
       console.error("Error guardando datos:", error);
@@ -143,8 +125,8 @@ export default function FormMatricula() {
   };
 
   const validateStep = () => {
-    const { nombre } = formData;
-    if (activeStep === 0 && !nombre) {
+    const { cooperativaName, ciudad } = formData;
+    if (activeStep === 0 && (!cooperativaName || !ciudad)) {
       setError(
         "Por favor, complete todos los campos obligatorios correctamente."
       );
@@ -159,942 +141,91 @@ export default function FormMatricula() {
       case 0:
         return (
           <Stack spacing={2}>
-            <CustomSelect
-              label="Tipo de documento"
-              name="typeId"
-              defaultValue={formData.typeId || " "}
-              options={[
-                { value: "CC", label: "Cédula de ciudadanía" },
-                { value: "CE", label: "Cédula de Extranjería" },
-                { value: "PP", label: "Pasaporte" },
-                { value: "TI", label: "Tarjeta de identidad" },
-                { value: "PE", label: "Permiso Especial de Permanencia" },
-                { value: "PPT", label: "Permiso de protección temporal" },
-              ]}
-              onChange={handleSelectChange}
+            <FormInput
+              name="ciudad"
+              value={formData.ciudad || ""}
+              onChange={handleChange}
+              placeholder="Ciudad"
+            />
+            <FormInput
+              name="departamento"
+              value={formData.departamento || ""}
+              onChange={handleChange}
+              placeholder="Departamento"
+            />
+            <FormInput
+              name="municipio"
+              value={formData.municipio || ""}
+              onChange={handleChange}
+              placeholder="Municipio donde vive"
+            />
+            <FormInput
+              name="nameBoss"
+              value={formData.nameBoss || ""}
+              onChange={handleChange}
+              placeholder="nombre del presidente designado"
+            />
+            <FormInput
+              name="nameSubBoss"
+              value={formData.nameSubBoss || ""}
+              onChange={handleChange}
+              placeholder="nombre del secretario designado"
+            />
+            <FormInput
+              name="nameCooperativa"
+              value={formData.nameCooperativa || ""}
+              onChange={handleChange}
+              placeholder="nombre de la cooperativa"
+            />
+            <FormLabel>miembros del Consejo de administración</FormLabel>
+            <DynamicForm formData={formData} setFormData={setFormData} />
+            <FormLabel> miembros de la junta de vigilancia</FormLabel>
+            <DynamicForm2 formData={formData} setFormData={setFormData} />
+            <FormInput
+              name="revisorFiscal"
+              value={formData.revisorFiscal || ""}
+              onChange={handleChange}
+              placeholder="Revisor Fiscal"
+            />
+            <FormInput
+              name="revisorFiscalTP"
+              value={formData.revisorFiscalTP || ""}
+              onChange={handleChange}
+              placeholder="Revisor Fiscal Tarjeta Profesional"
+            />
+            <FormInput
+              name="revisorFiscalCC"
+              value={formData.revisorFiscalCC || ""}
+              onChange={handleChange}
+              placeholder="Cédula Revisor Fiscal"
+            />
+            <FormDatePicker
+              name="expediciónCC"
+              value={formData.expediciónCC} // Enviar valor como cadena en formato "YYYY-MM-DD"
+              onChange={(name, newValue) => handleInputChange(name, newValue)} // Usamos handleInputChange para manejar la fecha
+              placeholder="fecha de expedición de la cédula del revisor fiscal"
+            />
+            <FormInput
+              name="gerente"
+              value={formData.gerente || ""}
+              onChange={handleChange}
+              placeholder="Gerente "
             />
 
             <FormInput
-              name="id"
-              value={formData.id || ""}
+              name="gerenteCC"
+              value={formData.gerenteCC || ""}
               onChange={handleChange}
-              placeholder="Numero de documento"
+              placeholder="Cédula Gerente "
             />
-
-            <FormInput
-              name="nombre"
-              value={formData.nombre || ""}
-              onChange={handleChange}
-              placeholder="Nombres"
-            />
-
-            <FormInput
-              name="apellido"
-              value={formData.apellido || ""}
-              onChange={handleChange}
-              placeholder="Apellidos"
-            />
-
-            <FormInput
-              name="telefono"
-              value={formData.telefono || ""}
-              onChange={handleChange}
-              placeholder="Teléfono"
-            />
-
-            <FormInput
-              name="email"
-              value={formData.email || ""}
-              onChange={handleChange}
-              placeholder="Correo Electrónico"
-              helperText="Por favor, asegúrese de que el correo es correcto."
+            <FormDatePicker
+              name="expediciónCCG"
+              value={formData.expediciónCCG} // Enviar valor como cadena en formato "YYYY-MM-DD"
+              onChange={(name, newValue) => handleInputChange(name, newValue)} // Usamos handleInputChange para manejar la fecha
+              placeholder="fecha de expedición de la cédula del Gerente"
             />
           </Stack>
         );
-      case 1:
-        return (
-          <Stack spacing={2}>
-            <List>
-              <ListItem>
-                Seleccione esta alternativa en el sitio web de la cámara de
-                comercio donde esta cargando Por favor recuerde
-              </ListItem>
-              <ListItem>
-                que antes de continuar en la plataforma de la CC, debe verificar
-                si el nombre que desea para su empresa ya se encuentra
-                registrado y por lo tanto debería establecer un nombre diferente
-                para su cooperativa
-              </ListItem>
-              <ListItem>
-                <a href="https://www.ccc.org.co/sedevirtual/consulta-homonimia/">
-                  <strong color="info">Verificar Homonimia</strong>
-                </a>
-              </ListItem>
-              <ListItem>
-                Allí debe ingresar por el espacio: REGISTRO DE ENTIDADES DE LA
-                ECONOMIA SOLIDARIA
-              </ListItem>
-            </List>
-          </Stack>
-        );
-      case 2:
-        return (
-          <Stack spacing={2}>
-            <Alert color="neutral">
-              Ingrese en la plataforma de la CC a través del botón identificado
-              como Iniciar Matricula/Inscripción En esta parte del proceso, el
-              sistema le genera el código único del formulario - CUF - Tome nota
-              de ello y consérvelo para posteriores accesos
-            </Alert>
-            <FormInput
-              name="Rsocial"
-              value={formData.Rsocial || ""}
-              onChange={handleChange}
-              placeholder="Razón Social"
-              helperText="Nombre que le identificará, normalmente se inicia con la palabra
-                Cooperativa...."
-            />
-
-            <FormInput
-              name="SIGLA"
-              value={formData.SIGLA || ""}
-              onChange={handleChange}
-              placeholder="SIGLA"
-              helperText="Que representa el nombre de la Cooperativa"
-            />
-            <Alert color="neutral">
-              Datos del Domicilio PRINCIPAL - COMERCIAL Estos datos deben
-              coincidir con los registrados en el Registro Único Tributario -
-              DIAN
-            </Alert>
-            <FormInput
-              name="País"
-              value={formData.Pais || ""}
-              onChange={handleChange}
-              placeholder="País"
-            />
-            <FormInput
-              name="Municipio"
-              value={formData.Municipio || ""}
-              onChange={handleChange}
-              placeholder="Municipio"
-            />
-            <FormInput
-              name="Domicilio"
-              value={formData.Domicilio || ""}
-              onChange={handleChange}
-              placeholder="Dirección del Domicilio principal"
-            />
-            <FormInput
-              name="Localidad"
-              value={formData.Localidad || ""}
-              onChange={handleChange}
-              placeholder="Localidad, barrio, vereda, corregimiento"
-              helperText="En la plataforma de la CC debe seleccionarlo entre las
-                alternativas que allí se presentan"
-            />
-            <RadioCheck
-              label="Zona"
-              name="ubicacion"
-              options={[
-                {
-                  value: "urbana",
-                  label: "Urbana",
-                },
-                { value: "rural", label: "Rural" },
-              ]}
-              initialValue={formData.ubicacion}
-              onChange={handleRadioChange}
-            />
-
-            <FormInput
-              name="Cpostal"
-              value={formData.Cpostal || ""}
-              onChange={handleChange}
-              placeholder="Código postal"
-              helperText="En la plataforma de la CC esta pregunta no es obligatoria, si lo
-                conoce es opcional responderlo"
-            />
-            <CustomSelect
-              label="Ubicación"
-              name="ubicacion"
-              defaultValue={formData.ubicacion}
-              options={[
-                { value: "Local", label: "Local" },
-                { value: "Oficina", label: "Oficina" },
-                { value: "LocalY", label: "Local y oficina" },
-                { value: "Fabrica", label: "Fábrica" },
-                { value: "Finca", label: "Finca" },
-                { value: "Vivienda", label: "Vivienda" },
-              ]}
-              onChange={handleSelectChange}
-            />
-            <Alert color="neutral">
-              Se requiere como mínimo un número telefónico fijo o celular para
-              el envió de mensajes
-            </Alert>
-            <FormInput
-              name="telefono"
-              value={formData.telefono || ""}
-              onChange={handleChange}
-              placeholder="Teléfono"
-            />
-            <FormInput
-              name="telefono2"
-              value={formData.telefono2 || ""}
-              onChange={handleChange}
-              placeholder="Teléfono 2"
-            />
-            <FormInput
-              name="telefono3"
-              value={formData.telefono3 || ""}
-              onChange={handleChange}
-              placeholder="Teléfono 2"
-            />
-            <FormInput
-              name="email"
-              value={formData.email || ""}
-              onChange={handleChange}
-              placeholder="Correo Electrónico"
-            />
-            <Alert color="neutral">
-              De acuerdo con el artículo 291 del Código General del Proceso,
-              “las personas jurídicas de derecho privado y los comerciantes
-              inscritos en el registro mercantil deberán registrar en la Cámara
-              de Comercio o en la oficina de registro correspondiente del lugar
-              donde funcione su sede principal, sucursal o agencia, la dirección
-              donde recibirán notificaciones judiciales. Con el mismo propósito
-              deberán registrar, además, una dirección electrónica”. Si los
-              datos para notificación judicial son iguales a los datos del
-              domicilio principal oprima el botón copiar datos comerciales. En
-              caso contrario debe diligenciar los mismos campos pero con la
-              información para recibo de notificaciones judiciales
-            </Alert>
-            <RadioCheck
-              label="De conformidad con lo establecido en el artículo 67 del Código
-                de Procedimiento Administrativo y de lo Contencioso
-                Administrativo, autorizo para que me notifiquen personalmente a
-                través del correo electrónico aquí especificado * Si"
-              name="articulo67"
-              options={[
-                {
-                  value: "articulo67True",
-                  label: "Si",
-                },
-                { value: "articulo67False", label: "No" },
-              ]}
-              initialValue={formData.articulo67}
-              onChange={handleRadioChange}
-            />
-            <CustomSelect
-              label="Sede"
-              name="sede"
-              defaultValue={formData.sede}
-              options={[
-                { value: "Arriendo", label: "Arriendo" },
-                { value: "Comodato", label: "Comodato" },
-                { value: "Propia", label: "Propia" },
-                { value: "Préstamo", label: "Préstamo" },
-              ]}
-              onChange={handleSelectChange}
-            />
-          </Stack>
-        );
-      case 3:
-        return (
-          <Stack spacing={2}>
-            <Alert color="neutral">
-              En los términos de la Ley, debe tomarse del balance de apertura o
-              de los Estados Financieros con corte a 31 de diciembre del año
-              anterior. Expresar las cifras en pesos colombianos. Datos sin
-              decimales. A traves del icono + debe adicionar la información
-              financiera, en la página de la CC de Cali.
-            </Alert>
-            <FormControl>
-              <FormLabel>
-                Estado situación financiera * <br />A continuación se presentan
-                los campos que requiere tener la información disponible en
-                cifras, para cargar a la plataforma de la CC
-              </FormLabel>
-              <Stack spacing={2}>
-                <CheckboxWithInput
-                  label="Activo Corriente - todo lo que es convertible en liquidez Ej: Caja, bancos, cuentas por cobrar, inventarios"
-                  name="activoCorriente"
-                  initialValue={formData.activoCorriente}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Activo No Corriente  - Activos fijos: Ej: Maquinaria y equipos, herramientas, vehículos..."
-                  name="activoNoCorriente"
-                  initialValue={formData.activoNoCorriente}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Activo Total = Suma de los corrientes + los No corrientes"
-                  name="activoTotal"
-                  initialValue={formData.activoTotal}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Pasivo Corriente - Deudas menores a un año - obligaciones bancarias - cuentas por pagar .."
-                  name="pasivoCorriente"
-                  initialValue={formData.pasivoCorriente}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Pasivo No Corrientes: Deudas u obligaciones a largo plazo mayores a un año: Ej - Créditos, obligaciones bancarias, cuentas por pagar ..."
-                  name="pasivoNoCorrientes"
-                  initialValue={formData.pasivoNoCorrientes}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Pasivo Total = Pasivo Corriente + Pasivo No corriente"
-                  name="pasivoTotal"
-                  initialValue={formData.pasivoTotal}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Patrimonio Neto = Activos Total - Pasivo Total"
-                  name="patrimonioNeto"
-                  initialValue={formData.patrimonioNeto}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Pasivo + Patrimonio = Activos Totales"
-                  name="pasivoPatrimonio"
-                  initialValue={formData.pasivoPatrimonio}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Balance Social $ : Corresponde el valor relacionado con actividades como recreación, turismo, vivienda, educación, etc para sus asociados"
-                  name="balanceSocial"
-                  initialValue={formData.balanceSocial}
-                  onChange={handleInputChange}
-                />
-                <FormControl>
-                  <FormLabel>Grupo NIIF</FormLabel>
-                  <RadioGroup
-                    defaultValue="outlined"
-                    name="radio-buttons-group"
-                  >
-                    <Radio
-                      value="Entidades"
-                      label="Entidades controlados por supersalud y supersubsidio"
-                      variant="outlined"
-                    />
-                    <Radio
-                      value="grupo1"
-                      label="Grupo 1: NIIF Plenas: corresponde a los que cumplen montos mínimos de acuerdo a sus estados financieros"
-                      variant="outlined"
-                    />
-                    <Radio
-                      value="grupo2"
-                      label="Grupo 2: PYMES: Las cooperativas aplican en este grupo"
-                      variant="outlined"
-                    />
-                    <Radio
-                      value="grupo3"
-                      label="Grupo 3: Personas naturales, jurídicas o microempresas"
-                      variant="outlined"
-                    />
-                  </RadioGroup>
-                </FormControl>
-                <Alert color="neutral">ESTADO DE RESULTADOS</Alert>
-                <FormLabel>
-                  Valores requeridos en $ para cargar en la plataforma de la
-                  CC.*
-                </FormLabel>
-                <CheckboxWithInput
-                  label="Ingresos Actividad Ordinaria $: corresponde a lo percibido como ventas de su actividad normal"
-                  name="ingresosActividad"
-                  initialValue={formData.ingresosActividad}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Otros Ingresos $: corresponde a lo percibido por actividades adicionales a la normal"
-                  name="otrosIngresos"
-                  initialValue={formData.otrosIngresos}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Costo de Ventas $: Costos que le implica o le representa los costos de mercancía o de producción."
-                  name="costoDeVentas"
-                  initialValue={formData.costoDeVentas}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Gastos Operativos $: Son los Desembolso relacionados con el funcionamiento de la parte administrativa y servicios públicos"
-                  name="gastosOperativos"
-                  initialValue={formData.gastosOperativos}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Otros Gastos $: Desembolso generados por imprevistos o antes no cubiertos"
-                  name="otrosGastos"
-                  initialValue={formData.otrosGastos}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Gastos por Impuestos $: como se indica corresponde a lo relacionado por impuestos"
-                  name="gastosPorImpuestos"
-                  initialValue={formData.gastosPorImpuestos}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Utilidad / Pérdida Operacional $ = Total Ingresos - Total (Gastos y costos)"
-                  name="utilidad"
-                  initialValue={formData.utilidad}
-                  onChange={handleInputChange}
-                />
-                <CheckboxWithInput
-                  label="Resultado del Periodo $ = Utilidad/ Pérdida operacional - impuestos - depreciación  = Total Ingresos - Total (Gastos y costos) - Impuestos - depreciación"
-                  name="resultadoDelPeriodo"
-                  initialValue={formData.resultadoDelPeriodo}
-                  onChange={handleInputChange}
-                />
-              </Stack>
-            </FormControl>
-          </Stack>
-        );
-      case 4:
-        return (
-          <Stack spacing={2}>
-            <RadioCheck
-              label="Estado actual de la persona JURÍDICA *"
-              name="estadoActual"
-              options={[
-                {
-                  value: "Entidades",
-                  label: "Entidades controlados por supersalud y supersubsidio",
-                },
-                {
-                  value: "grupo1",
-                  label:
-                    "Grupo 1: NIIF Plenas: corresponde a los que cumplen montos mínimos de acuerdo a sus estados financieros",
-                },
-                {
-                  value: "grupo2",
-                  label:
-                    "Grupo 2: PYMES: Las cooperativas aplican en este grupo",
-                },
-                {
-                  value: "grupo3",
-                  label:
-                    "Grupo 3: Personas naturales, jurídicas o microempresas",
-                },
-              ]}
-              initialValue={formData.estadoActual}
-              onChange={handleRadioChange}
-            />
-
-            <FormInput
-              name="cEmpleados"
-              value={formData.cEmpleados || ""}
-              onChange={handleChange}
-              placeholder="Número de empleados"
-              helperText={
-                "Incluye trabajadores vinculados directamente con la empresa y empleados temporales. (pueden ser o hacer parte de los mismos asociados)"
-              }
-            />
-            <FormInput
-              name="pEmpleados"
-              value={formData.pEmpleados || ""}
-              onChange={handleChange}
-              placeholder="Porcentaje de empleados temporales (%)"
-            />
-            <FormInput
-              name="cEmpleadosMujeres"
-              value={formData.cEmpleadosMujeres || ""}
-              onChange={handleChange}
-              placeholder="Indique número total de mujeres empleadas en la empresa"
-            />
-            <FormInput
-              name="cEmpleadosMujeresBoss"
-              value={formData.cEmpleadosMujeresBoss || ""}
-              onChange={handleChange}
-              placeholder="Indique número de mujeres que ocupan cargos directivos. (Que pertenecen al consejo de administración y/o Gerencia)"
-            />
-
-            <RadioCheck
-              label="¿Es una empresa familiar?"
-              name="familiar"
-              options={[
-                {
-                  value: "familiarTrue",
-                  label: "Si",
-                },
-                { value: "familiarFalse", label: "No" },
-              ]}
-              initialValue={formData.familiar}
-              onChange={handleRadioChange}
-            />
-
-            <RadioCheck
-              label="¿Tiene la empresa implementado un proceso de innovación? 
-                En caso de encontrarse formalmente establecido dicho proceso"
-              name="proceso"
-              options={[
-                {
-                  value: "empresaTrue",
-                  label: "Si",
-                },
-                { value: "empresaFalse", label: "No" },
-              ]}
-              initialValue={formData.proceso}
-              onChange={handleRadioChange}
-            />
-
-            <RadioCheck
-              label="Seleccione si es importador o exportador *"
-              name="tipoUsuario"
-              options={[
-                { value: "noAplica", label: "No aplica" },
-                { value: "importador", label: "Importador" },
-                {
-                  value: "importadorExportador",
-                  label: "Importador y exportador",
-                },
-                { value: "usuarioAduanero", label: "Usuario aduanero" },
-              ]}
-              initialValue={formData.tipoUsuario}
-              onChange={handleRadioChange}
-            />
-            <RadioCheck
-              label="¿Es aportante al sistema de seguridad y protección social? *"
-              name="tipoAportante"
-              options={[
-                {
-                  value: "aportanteTrue",
-                  label:
-                    "Si : Para este caso debe identificar tipo de aportante: Independientes, + o - de 200 trabajadores",
-                },
-                { value: "aportanteFalse", label: "No" },
-              ]}
-              initialValue={formData.tipoAportante}
-              onChange={handleRadioChange}
-            />
-          </Stack>
-        );
-      case 5:
-        return (
-          <Stack spacing={2}>
-            <FormInput
-              name="actividadEconomica"
-              value={formData.actividadEconomica || ""}
-              onChange={handleChange}
-              placeholder="Actividad económica No 1 - de acuerdo al CIIU -  (Debe hacer el mismo alistamiento de información en caso de que vaya a reportar varias actividades)"
-              helperText={
-                "Ingrese la descripción reportada en la página consultada para el CIIU"
-              }
-            />
-            <FormInput
-              name="codigoActividad"
-              value={formData.codigoActividad || ""}
-              onChange={handleChange}
-              placeholder="Código Actividad económica No 1 - de acuerdo al CIIU -  (Debe hacer el mismo alistamiento de información en caso de que vaya a reportar varias actividades)"
-              helperText={
-                "Ingrese el código de la actividad económica reportado en la página consultada para el CIIU"
-              }
-            />
-            <RadioCheck
-              label="Indicar si corresponde a la actividad que genera los mayores ingresos*"
-              name="mayoresIngresos"
-              options={[
-                {
-                  value: "ingresosTrue",
-                  label: "Si",
-                },
-                { value: "ingresosFalse", label: "No" },
-              ]}
-              initialValue={formData.mayoresIngresos}
-              onChange={handleRadioChange}
-            />
-          </Stack>
-        );
-      case 6:
-        return (
-          <Stack spacing={2}>
-            <Alert color="neutral">
-              Persona jurídica: Una vez verificada la información del Registro
-              Único Tributario (RUT), manifiesto que la persona jurídica que
-              represento tiene las siguientes responsabilidades, calidades y
-              atributos tributarios: Consulte aquí las responsabilidades
-              tributarias, con el fin de evitar inconsistencias en la asignación
-              de su NIT por parte de la DIAN
-            </Alert>
-            <RadioCheck
-              label="Confirmo que efectué la consulta de las responsabilidades tributarias en la herramienta que dispone la VUE*"
-              name="confirmo"
-              options={[
-                {
-                  value: "confirmoTrue",
-                  label: "Si",
-                },
-                { value: "confirmoFalse", label: "No" },
-              ]}
-              initialValue={formData.confirmo}
-              onChange={handleRadioChange}
-            />
-            <RadioCheck
-              label="Responsabilidad, calidad y atributo*
-Con base en la información acordada con el CONTADOR o el área que corresponda, indica la alternativa que les representa.
-
-En la serie de opciones o alternativas de respuesta que presenta la plataforma, algunos de los códigos no son consecutivos, al momento de la captura de información en la página de la CC"
-              name="responsabilidad"
-              options={[
-                {
-                  value: "option1",
-                  label: "Aporte especial para la administración de justicia",
-                },
-                {
-                  value: "option2",
-                  label: "Gravamen a los movimientos financieros",
-                },
-                { value: "option3", label: "Impuesto al patrimonio" },
-                {
-                  value: "option4",
-                  label:
-                    "Impuesta de renta y complementario - régimen especial",
-                },
-                {
-                  value: "option5",
-                  label:
-                    "Impuesta de renta y complementario - régimen ordinario",
-                },
-                { value: "option6", label: "Ingresos y patrimonio" },
-                {
-                  value: "option7",
-                  label: "Retención en la fuente a titulo de renta",
-                },
-                { value: "option8", label: "Retención timbre nacional" },
-                {
-                  value: "option9",
-                  label:
-                    "Retención en la fuente en el impuesto sobre las ventas",
-                },
-                { value: "option14", label: " Informante de exógena" },
-                {
-                  value: "option16",
-                  label:
-                    "Obligación facturar por ingresos bienes y/o servicios excluidos",
-                },
-                { value: "option18", label: " Precios de transferencia" },
-                {
-                  value: "option19",
-                  label: " Productos de vienes y o servicios excentos",
-                },
-                { value: "option20", label: " Obtención NIT Dto 3050 de 1997" },
-                {
-                  value: "option21",
-                  label:
-                    " Declara ingreso  o sali da del país de divisas o moneda legal",
-                },
-                {
-                  value: "option22",
-                  label:
-                    " Obligado a cumplir deberes formales a nombre de terceros,",
-                },
-                {
-                  value: "option23",
-                  label: " Declaración consolidada precios de transferencia",
-                },
-                {
-                  value: "option24",
-                  label: " Declaración consolidada precios de transferencia",
-                },
-                {
-                  value: "option26",
-                  label: "Declaración individual precios de transferencia",
-                },
-                {
-                  value: "option32",
-                  label: "Impuesto Nacional a la Gasolina y al ACPM",
-                },
-                { value: "option33", label: "Impuesto Nacional al consumo" },
-                { value: "option36", label: "Establecimiento permanente" },
-                {
-                  value: "option41",
-                  label: "Declaración anual de activos en el exterior",
-                },
-                { value: "option42", label: "Obligado a llevar contabilidad" },
-                {
-                  value: "option46",
-                  label: "IVA prestadores de servicios desde el exterior",
-                },
-                {
-                  value: "option47",
-                  label: "Régimen simplificado de tributación - Simple",
-                },
-                { value: "option48", label: "Impuesto sobre las ventas - IVA" },
-                { value: "option49", label: "No responsable de IVA" },
-                {
-                  value: "option50",
-                  label: "No responsable de consumo: Restaurantes y bares",
-                },
-                {
-                  value: "option51",
-                  label: "Agente retención de impoconsumo bienes inmuebles",
-                },
-                {
-                  value: "option53",
-                  label: "Persona Jurídica no responsable de IVA",
-                },
-                {
-                  value: "option54",
-                  label: "Intercambio Automático de Información CRS",
-                },
-                {
-                  value: "option55",
-                  label: "Informante Beneficiarios Finales",
-                },
-                { value: "option56", label: "Impuesto al Carbono" },
-                {
-                  value: "option57",
-                  label:
-                    "Persona Jurídica No Responsable del Impuesto al Consumo",
-                },
-              ]}
-              initialValue={formData.responsabilidad}
-              onChange={handleRadioChange}
-            />
-            <Alert color="neutral">ANEXO 5.</Alert>
-            <FormInput
-              name="cHombres"
-              value={formData.cHombres || ""}
-              onChange={handleChange}
-              placeholder="Número de mujeres"
-            />
-            <FormInput
-              name="cMujeres"
-              value={formData.cMujeres || ""}
-              onChange={handleChange}
-              placeholder="Número de hombres"
-            />
-            <FormInput
-              name="cAsociados"
-              value={formData.cAsociados || ""}
-              onChange={handleChange}
-              placeholder="Número de asociados"
-              helperText={"Numero de mujeres + número de hombres"}
-            />
-            <FormInput
-              name="entidad"
-              value={formData.entidad || ""}
-              onChange={handleChange}
-              placeholder="Entidad acreditada que impartió el curso básico de economía solidaria"
-              helperText={
-                "Indicar el nombre de la entidad que le certificó el curso referido"
-              }
-            />
-            <RadioCheck
-              label="¿Requiere autorización de registro?
-              (Aplica para las organizaciones especializadas de la economía solidaria)*"
-              name="autorización"
-              options={[
-                {
-                  value: "autorizaciónTrue",
-                  label: "Sí: por ejemplo Ahorro y crédito, las integrales..",
-                },
-                { value: "autorizaciónFalse", label: "No" },
-              ]}
-              initialValue={formData.autorización}
-              onChange={handleRadioChange}
-            />
-            <RadioCheck
-              label="¿Pertenece a un Gremio?*
-              En caso afirmativo debe indicar en la plataforma, el gremio al que pertenece"
-              name="gremio"
-              options={[
-                {
-                  value: "gremioTrue",
-                  label: "Sí",
-                },
-                { value: "gremioFalse", label: "No" },
-              ]}
-              initialValue={formData.gremio}
-              onChange={handleRadioChange}
-            />
-            {formData.gremio == "gremioTrue" && (
-              <FormInput
-                name="textGremio"
-                value={formData.textGremio || ""}
-                onChange={handleChange}
-                placeholder="Gremio al que pertenece"
-              />
-            )}
-            <RadioCheck
-              label="¿Ha remitido la documentación al ente de inspección, vigilancia y control?*"
-              name="documentacion"
-              options={[
-                {
-                  value: "documentacionTrue",
-                  label: "Sí",
-                },
-                { value: "documentacionFalse", label: "No" },
-              ]}
-              initialValue={formData.documentacion}
-              onChange={handleRadioChange}
-            />
-            <Alert color="neutral">
-              CLASE DE LA ENTIDAD SIN ÁNIMO DE LUCRO.
-            </Alert>
-            <RadioCheck
-              label="Clase de la entidad sin ánimo de lucro:"
-              name="claseEntidad"
-              options={[
-                {
-                  value: "claseEntidad1",
-                  label: "Cooperativa de trabajo asociado",
-                },
-                {
-                  value: "claseEntidadFalse",
-                  label:
-                    "Cooperativa de usuarios o de servicios a los asociados",
-                },
-                {
-                  value: "claseEntidad2",
-                  label: "Cooperativa especializada",
-                },
-                {
-                  value: "claseEntidad3",
-                  label: "Cooperativa Integral",
-                },
-                {
-                  value: "claseEntidad4",
-                  label:
-                    "Cooperativa Multiactiva: Esta opción permitiría realizar diferentes opciones de actividades económicas",
-                },
-              ]}
-              initialValue={formData.claseEntidad}
-              onChange={handleRadioChange}
-            />
-            <RadioCheck
-              label="Nombre de la entidad que ejerce inspección, vigilancia y control:*
-              Debe seleccionar entre las opciones: SUPERINTENDENCIA DE ECONOMÍA SOLIDARIA"
-              name="inspección"
-              options={[
-                {
-                  value: "inspección",
-                  label: "SUPERINTENDENCIA DE ECONOMÍA SOLIDARIA",
-                },
-              ]}
-              initialValue={formData.inspección}
-              onChange={handleRadioChange}
-            />
-            <Alert color="neutral">INFORMACIÓN ADICIONAL</Alert>
-            <RadioCheck
-              label="¿Personas vinculadas a su entidad presentan alguna discapacidad?"
-              name="discapacidad"
-              options={[
-                {
-                  value: "discapacidadTrue",
-                  label: "Si",
-                },
-                {
-                  value: "discapacidadFalse",
-                  label: "No",
-                },
-              ]}
-              initialValue={formData.discapacidad}
-              onChange={handleRadioChange}
-            />
-            <RadioCheck
-              label="¿Personas vinculadas a su entidad pertenecen a una etnia?*"
-              name="etnia"
-              options={[
-                {
-                  value: "etniaTrue",
-                  label:
-                    "Sí: En caso afirmativo en la plataforma de la CC, debe indicar cuál ETNIA",
-                },
-                {
-                  value: "etniaFalse",
-                  label: "No",
-                },
-              ]}
-              initialValue={formData.etnia}
-              onChange={handleRadioChange}
-            />
-            <RadioCheck
-              label="¿Personas vinculadas a su entidad pertenecen a un grupo LGBTI?*"
-              name="lgbti"
-              options={[
-                {
-                  value: "lgbtiTrue",
-                  label: "Si",
-                },
-                {
-                  value: "lgbtiFalse",
-                  label: "No",
-                },
-              ]}
-              initialValue={formData.lgbti}
-              onChange={handleRadioChange}
-            />
-            <RadioCheck
-              label="¿Cuenta con indicadores de gestión?"
-              name="indicadoresDeGestión"
-              options={[
-                {
-                  value: "indicadoresDeGestiónTrue",
-                  label: "Si",
-                },
-                {
-                  value: "indicadoresDeGestiónFalse",
-                  label: "No",
-                },
-              ]}
-              initialValue={formData.indicadoresDeGestión}
-              onChange={handleRadioChange}
-            />
-            <RadioCheck
-              label="¿Personas vinculadas a su entidad, tienen una condición de desplazados, víctimas o reinsertados?"
-              name="reinsertados"
-              options={[
-                {
-                  value: "desplazado",
-                  label: "Desplazado",
-                },
-                {
-                  value: "victima",
-                  label: "Victima",
-                },
-                {
-                  value: "reinsertado",
-                  label: "Reinsertado",
-                },
-                {
-                  value: "noAplica",
-                  label: "No aplica",
-                },
-              ]}
-              initialValue={formData.reinsertados}
-              onChange={handleRadioChange}
-            />
-            <Alert color="neutral">
-              BIENES RAÍCES Detalle los bienes raíces que posea en cumplimiento
-              del artículo 32 del Código de Comercio. Puede agregar más de un
-              bien raíz.
-            </Alert>
-            <MultiCheck
-              label="Información requerida por cada bien raíz a reportar*"
-              name="bienRaiz"
-              options={[
-                { value: "Matricula", label: "Matricula" },
-                { value: "Dirección", label: "Dirección" },
-                { value: "País", label: "País" },
-                { value: "Departamento", label: "Departamento" },
-                { value: "Ciudad", label: "Ciudad" },
-                { value: "Barrio", label: "Barrio" },
-              ]}
-              initialSelected={formData.bienRaiz}
-              onChange={handleMultiCheckChange}
-            />
-          </Stack>
-        );
-      case 7:
-        return <Stack spacing={2}></Stack>;
-
       default:
         return <Typography>Finalización del formulario.</Typography>;
     }
@@ -1111,19 +242,12 @@ En la serie de opciones o alternativas de respuesta que presenta la plataforma, 
       </Stack>
     );
   }
-
   return (
-    <Card style={{ marginTop: 20 }}>
-      <Stepper activeStep={activeStep} sx={{ width: "100%" }}>
-        {steps.map((step, index) => (
+    <Card style={{ marginTop: 20, padding: "20px" }}>
+      <Stepper activeStep={activeStep} sx={{ width: "100%", mb: 2 }}>
+        {steps.map((step) => (
           <Step key={step}>
-            <StepIndicator
-              variant={activeStep <= index ? "soft" : "solid"}
-              color={activeStep < index ? "neutral" : "primary"}
-            >
-              {activeStep <= index ? index + 1 : <Check />}
-            </StepIndicator>
-            <Typography onClick={() => setActiveStep(index)}>{step}</Typography>
+            <StepLabel>{step}</StepLabel>
           </Step>
         ))}
       </Stepper>

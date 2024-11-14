@@ -6,7 +6,7 @@ import Portfolio from "src/pages/Portfolio/Portfolio";
 import { Layout } from "src/pages/layout/layout";
 import PrivateRoutes from "./utils/private.routes";
 
-export const routesAIO = createBrowserRouter([
+export const routesSENA = createBrowserRouter([
   {
     path: "/dashboard",
     element: (

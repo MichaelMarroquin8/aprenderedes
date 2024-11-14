@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 
-const pdfSolicitud = () => {
+const pdfSolicitud = ({ data }) => {
+  console.log(data);
   const doc = new jsPDF("p", "mm", "a4"); // Documento A4
   const margin = 25;
   let cursorY = margin;
@@ -26,28 +27,28 @@ const pdfSolicitud = () => {
 
   cursorY += 25;
   // Título (Fecha y ciudad)
-  addText("Fecha, ciudad", margin, cursorY);
+  addText(`${data.date}, ${data.ciudad}`, margin, cursorY);
   cursorY += 25;
 
   // Datos del destinatario
-  addText("Doctor", margin, cursorY);
+  addText(`Doctor`, margin, cursorY);
   cursorY += 6;
-  addText("_____________________________", margin, cursorY);
+  addText(`${data.nameDestinatario}`, margin, cursorY);
   cursorY += 6;
-  addText("Presidente Ejecutivo", margin, cursorY);
+  addText(`Presidente Ejecutivo`, margin, cursorY);
   cursorY += 6;
-  addText("Cámara de Comercio de ________________", margin, cursorY);
+  addText(`Cámara de Comercio de ${data.nombreCCC}`, margin, cursorY);
   cursorY += 6;
-  addText("Ciudad - Departamento", margin, cursorY);
+  addText(`${data.ciudad} - ${data.departamento}`, margin, cursorY);
   cursorY += 20;
 
   // Saludo
-  addText("Cordial Saludo:", margin, cursorY);
+  addText(`Cordial Saludo:`, margin, cursorY);
   cursorY += 15;
 
   // Cuerpo de la carta con texto justificado
-  const bodyText = `Yo, _______________________, identificado con la cédula de ciudadanía No.
-_____________, actuando en representación legal de la Cooperativa _______________,
+  const bodyText = `Yo, ${data.name}, identificado con la cédula de ciudadanía No.
+${data.cc}, actuando en representación legal de la Cooperativa ${data.cooperativaName},
 solicito se nos otorgue la personería jurídica de nuestra organización, para lo cual me
 permito presentar constancia de los numerales que se indican en el artículo primero de su
 parágrafo segundo del decreto 0427 de 1996 y declaramos que nos comprometemos a
@@ -111,7 +112,7 @@ cumplir las disposiciones legales y estatutarias que rigen la organización.`;
 
   // Firma
   addText("Firma Gerente", margin, cursorY);
-  cursorY += 6;
+  cursorY += 12;
   addText("___________________________", margin, cursorY);
   cursorY += 6;
   addText("Cédula", margin, cursorY);

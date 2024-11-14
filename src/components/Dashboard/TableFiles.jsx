@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Avatar from '@mui/joy/Avatar';
-import AvatarGroup from '@mui/joy/AvatarGroup';
-import Typography from '@mui/joy/Typography';
-import Table from '@mui/joy/Table';
+import Avatar from '@mui/material/Avatar';
+import AvatarGroup from '@mui/material/AvatarGroup';
+import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
 
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';

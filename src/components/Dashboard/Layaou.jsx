@@ -1,6 +1,6 @@
 import * as React from "react";
-import Box from "@mui/joy/Box";
-import Sheet from "@mui/joy/Sheet";
+import Box from "@mui/material/Box";
+import Sheet from "@mui/material/Sheet";
 
 function Root(props) {
   return (

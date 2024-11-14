@@ -1,38 +1,54 @@
-import { Checkbox, FormControl, FormLabel, Stack } from "@mui/joy";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {
+  Tooltip,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
 
-function MultiCheck({ label, options, name, initialSelected = [], onChange }) {
-  const [selectedOptions, setSelectedOptions] = useState(
-    new Set(initialSelected)
-  );
+export default function CustomSelect({
+  label,
+  name,
+  options,
+  onSelectionChange,
+  defaultO = "",
+  isDisable = false,
+}) {
+  const [selectedValue, setSelectedValue] = useState(defaultO);
 
-  const handleCheckboxChange = (optionValue) => {
-    const newSelectedOptions = new Set(selectedOptions);
-    if (newSelectedOptions.has(optionValue)) {
-      newSelectedOptions.delete(optionValue); // Desmarca si ya estaba seleccionada
-    } else {
-      newSelectedOptions.add(optionValue); // Marca si no estaba seleccionada
+  useEffect(() => {
+    setSelectedValue(defaultO);
+  }, [defaultO]);
+
+  const handleChange = (event) => {
+    const newValue = event.target.value;
+    setSelectedValue(newValue);
+    if (onSelectionChange) {
+      onSelectionChange(name, newValue);
     }
-
-    setSelectedOptions(newSelectedOptions);
-    onChange(name, Array.from(newSelectedOptions)); // Llama a onChange con las opciones seleccionadas
   };
 
   return (
-    <FormControl>
-      <FormLabel>{label}</FormLabel>
-      <Stack spacing={1}>
+    <FormControl fullWidth disabled={isDisable}>
+      <InputLabel>{label}</InputLabel>
+      <Select value={selectedValue} label={label} onChange={handleChange}>
         {options.map((option) => (
-          <Checkbox
-            key={option.value}
-            checked={selectedOptions.has(option.value)}
-            onChange={() => handleCheckboxChange(option.value)}
-            label={option.label}
-          />
+          <MenuItem key={option.value} value={option.value}>
+            {option.tooltip ? (
+              <Tooltip title={option.tooltip} arrow>
+                <span style={{ display: "flex", alignItems: "center" }}>
+                  <InfoIcon style={{ color: "gray", marginRight: 8 }} />
+                  {option.label}
+                </span>
+              </Tooltip>
+            ) : (
+              option.label
+            )}
+          </MenuItem>
         ))}
-      </Stack>
+      </Select>
     </FormControl>
   );
 }
-
-export default MultiCheck;
