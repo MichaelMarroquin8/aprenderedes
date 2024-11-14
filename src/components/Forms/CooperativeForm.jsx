@@ -47,7 +47,6 @@ const CooperativeForm = () => {
   };
 
   const handleChange = (e) => {
-    console.log(e.target.name);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,

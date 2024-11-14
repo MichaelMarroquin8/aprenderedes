@@ -207,7 +207,7 @@ const PdfActa = ({ data }) => {
   cursorY += 8;
 
   addJustifiedText(
-    `En la ciudad de ${data.ciudad}- Departamento ${data.departamento}, a los ${data.dia} días del mes de ${data.mesName} de ${data.cooperativaName}, siendo las ${data.hora} , nosotros los abajo firmantes, debidamente constituidos, domiciliados en el municipio de ${data.municipio} Departamento del ${data.departamento}, República de Colombia, mayores de 18 años, actuando en nuestro propio nombre, e instalados en Asamblea de constitución, hemos acordado lo siguiente:`
+    `En la ciudad de ${data.ciudad}- Departamento ${data.departamento}, a los ${data.dia} días del mes de ${data.mesName} de ${data.cooperativaName}, siendo las ${data.hora}:${data.minutos}, nosotros los abajo firmantes, debidamente constituidos, domiciliados en el municipio de ${data.municipio} Departamento del ${data.departamento}, República de Colombia, mayores de 18 años, actuando en nuestro propio nombre, e instalados en Asamblea de constitución, hemos acordado lo siguiente:`
   );
 
   cursorY += 5;

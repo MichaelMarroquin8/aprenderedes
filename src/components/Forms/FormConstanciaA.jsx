@@ -25,14 +25,7 @@ export default function FormConstanciaA() {
   const [activeStep, setActiveStep] = React.useState(0);
 
   const [formData, setFormData] = React.useState({
-    nameDestinatario: "",
     date: dayjs(),
-    nameCCC: "",
-    ciudad: "",
-    departamento: "",
-    name: "",
-    cc: "",
-    cooperativaName: "",
   });
 
   const [loading, setLoading] = React.useState(true);
@@ -49,8 +42,6 @@ export default function FormConstanciaA() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFormData(docSnap.data());
-          console.log(docSnap.data());
-          console.log(formData);
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);
@@ -99,7 +90,7 @@ export default function FormConstanciaA() {
         año: dayjs().format("YYYY"),
         date: dayjs().toISOString(), // Almacenar la fecha como cadena ISO
       };
-  
+
       await setDoc(
         doc(firestore, "constanciaAprobacion", userId),
         updatedFormData,
@@ -112,7 +103,6 @@ export default function FormConstanciaA() {
       setError("Error guardando los datos. Por favor, intente nuevamente.");
     }
   };
-  
 
   const validateStep = () => {
     const { cooperativaName, ciudad } = formData;

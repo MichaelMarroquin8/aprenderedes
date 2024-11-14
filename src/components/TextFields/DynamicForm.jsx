@@ -5,7 +5,6 @@ import FormInput from "./FormInput"; // Tu componente FormInput
 
 function DynamicForm({ formData, setFormData }) {
   const handleInputChange = (index, name, value) => {
-    console.log(index, name, value);
     // Si el campo es una fecha, asegúrate de pasarlo como cadena de texto formateada
     const updatedValue = name.includes("fecha") ? value : value;
 

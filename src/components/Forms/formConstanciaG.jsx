@@ -25,14 +25,7 @@ export default function FormConstanciaG() {
   const [activeStep, setActiveStep] = React.useState(0);
 
   const [formData, setFormData] = React.useState({
-    nameDestinatario: "",
     date: dayjs(),
-    nameCCC: "",
-    ciudad: "",
-    departamento: "",
-    name: "",
-    cc: "",
-    cooperativaName: "",
   });
 
   const [loading, setLoading] = React.useState(true);
@@ -49,8 +42,6 @@ export default function FormConstanciaG() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFormData(docSnap.data());
-          console.log(docSnap.data());
-          console.log(formData);
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);
@@ -93,10 +84,8 @@ export default function FormConstanciaG() {
       // Establecer la fecha de hoy al guardar los datos
       const updatedFormData = {
         ...formData,
-        date: dayjs().format("DD/MM/YYYY"), // Establecer la fecha actual aquí
+        date: dayjs().format("DD/MMMM/YYYY"), // Establecer la fecha actual aquí
       };
-
-      console.log(updatedFormData); // Imprime los datos actualizados, incluyendo la fecha
 
       await setDoc(
         doc(firestore, "constanciaGerente", userId),
@@ -141,13 +130,14 @@ export default function FormConstanciaG() {
               name="cantidadE"
               value={formData.cantidadE || ""}
               onChange={handleChange}
-              placeholder="Cantidad que han aportado todos los asociados a la cooperativa en partes iguales"
+              placeholder="Monto cancelado por cada uno de los asociados  ____________ MIL PESOS"
             />
             <FormInput
+              type="number"
               name="cantidadN"
               value={formData.cantidadN || ""}
               onChange={handleChange}
-              placeholder="Cantidad en números que han aportado todos los asociados a la cooperativa en partes iguales"
+              placeholder="Monto cancelado por cada uno de los asociados  ____________ MIL PESOS (valor en números)"
             />
             <FormInput
               name="ciudad"

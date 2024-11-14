@@ -1,7 +1,6 @@
 import jsPDF from "jspdf";
 
 const pdfSolicitud = ({ data }) => {
-  console.log(data);
   const doc = new jsPDF("p", "mm", "a4"); // Documento A4
   const margin = 25;
   let cursorY = margin;

@@ -5,6 +5,7 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { firestore } from "src/services/firebase-config";
 import * as XLSX from "xlsx";
+import Skeleton from "@mui/material/Skeleton"; // Importa el Skeleton
 
 import Cards from "src/components/Cards/Cards";
 import PdfModelo from "src/components/Doc/PdfModelo";
@@ -18,17 +19,23 @@ export default function Dashboard() {
   const [categories, setCategories] = useState([]);
   const [forms, setForms] = useState([]);
   const [tabValue, setTabValue] = useState(2);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingForms, setLoadingForms] = useState(true);
 
   const userId = localStorage.getItem("user");
 
   useEffect(() => {
     const fetchDataCategory = async () => {
+      setLoadingCategories(true);
       const querySnapshot = await getDocs(collection(firestore, "Category"));
       setCategories(querySnapshot.docs.map((doc) => doc.data()));
+      setLoadingCategories(false);
     };
     const fetchForms = async () => {
+      setLoadingForms(true);
       const querySnapshot = await getDocs(collection(firestore, "Forms"));
       setForms(querySnapshot.docs.map((doc) => doc.data()));
+      setLoadingForms(false);
     };
     fetchDataCategory();
     fetchForms();
@@ -171,45 +178,61 @@ export default function Dashboard() {
           aria-label="basic tabs example"
           sx={{ pb: 3 }}
         >
-          {categories.map((item, index) => (
-            <Tab
-              key={index}
-              value={item.idCategory}
-              label={item.nameCategory}
-            />
-          ))}
+          {loadingCategories
+            ? Array.from({ length: 4 }).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="rounded"
+                  width={180}
+                  height={50}
+                  sx={{ borderRadius: 1, mx: 1 }}
+                />
+              ))
+            : categories.map((item, index) => (
+                <Tab
+                  key={index}
+                  value={item.idCategory}
+                  label={item.nameCategory}
+                />
+              ))}
         </Tabs>
       </Box>
-      {forms.map((form, index) => (
-        <Box
-          key={index}
-          sx={{ display: form.category === tabValue ? "block" : "none" }}
-        >
-          <Cards
-            index={form.category}
-            value={form.category}
-            document={form.document}
-            title={form.nameForm}
-            category={form.summary}
-            onDownloadExcel={form.type === "excel" ? downloadExcel : null}
-            onDownloadPDF={
-              form.document === "modelo"
-                ? modeloPDF
-                : form.document === "acta"
-                ? actaPDF
-                : form.document === "solicitud"
-                ? solicitudPDF
-                : form.document === "link"
-                ? linkPDF
-                : form.document === "constanciaGerente"
-                ? constanciaGerentePDF
-                : form.document === "constanciaAprobacion"
-                ? constanciaAprobacionPDF
-                : null
-            }
-          />
-        </Box>
-      ))}
+      {loadingForms
+        ? Array.from({ length: 3 }).map((_, index) => (
+            <Box key={index} sx={{ p: 2 }}>
+              <Skeleton variant="rounded" width="100%" height={180} />
+            </Box>
+          ))
+        : forms.map((form, index) => (
+            <Box
+              key={index}
+              sx={{ display: form.category === tabValue ? "block" : "none" }}
+            >
+              <Cards
+                index={form.category}
+                value={form.category}
+                document={form.document}
+                title={form.nameForm}
+                category={form.summary}
+                onDownloadExcel={form.type === "excel" ? downloadExcel : null}
+                onDownloadPDF={
+                  form.document === "modelo"
+                    ? modeloPDF
+                    : form.document === "acta"
+                    ? actaPDF
+                    : form.document === "solicitud"
+                    ? solicitudPDF
+                    : form.document === "link"
+                    ? linkPDF
+                    : form.document === "constanciaGerente"
+                    ? constanciaGerentePDF
+                    : form.document === "constanciaAprobacion"
+                    ? constanciaAprobacionPDF
+                    : null
+                }
+              />
+            </Box>
+          ))}
     </Box>
   );
 }

@@ -88,7 +88,7 @@ const pdfConstanciaGerente = ({ data }) => {
   cursorY += 10;
 
   addJustifiedText(
-    `Que el Estatuto, contiene las previsiones de la Ley 79 de 1988, el cual se encuentra firmado por el Presidente y Secretario de la Asamblea, realizada en reunión celebrada el día ${data.dia} de ${data.mes} de ${data.año}`
+    `Que el Estatuto, contiene las previsiones de la Ley 79 de 1988, el cual se encuentra firmado por el Presidente y Secretario de la Asamblea, realizada en reunión celebrada el día ${data.dia} de ${data.mesName} de ${data.año}`
   );
   cursorY += 7;
 

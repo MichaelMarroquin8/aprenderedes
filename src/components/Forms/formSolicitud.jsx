@@ -49,8 +49,6 @@ export default function FormSolicitud() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFormData(docSnap.data());
-          console.log(docSnap.data());
-          console.log(formData);
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);
@@ -93,10 +91,8 @@ export default function FormSolicitud() {
       // Establecer la fecha de hoy al guardar los datos
       const updatedFormData = {
         ...formData,
-        date: dayjs().format("DD/MM/YYYY"), // Establecer la fecha actual aquí
+        date: dayjs().format("DD/MMMM/YYYY"), // Establecer la fecha actual aquí
       };
-
-      console.log(updatedFormData); // Imprime los datos actualizados, incluyendo la fecha
 
       await setDoc(doc(firestore, "solicitud", userId), updatedFormData, {
         merge: true, // Merge para evitar sobrescribir datos previos

@@ -37,8 +37,8 @@ const steps = [
 ];
 
 export default function FormModelo() {
-  const isMobile = useMediaQuery("(max-width:600px)"); // Media query para pantallas pequeñas
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width:600px)"); // Media query para pantallas pequeñas
   const [activeStep, setActiveStep] = React.useState(0);
 
   const [formData, setFormData] = React.useState({
@@ -59,8 +59,6 @@ export default function FormModelo() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFormData(docSnap.data());
-          console.log(docSnap.data());
-          console.log(formData);
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);

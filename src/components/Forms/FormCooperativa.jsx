@@ -2,6 +2,7 @@ import {
   Alert,
   Button,
   Card,
+  CardMedia,
   CircularProgress,
   FormControl,
   FormLabel,
@@ -13,6 +14,7 @@ import {
   StepLabel,
   Stepper,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import * as React from "react";
@@ -22,6 +24,8 @@ import CheckboxWithInput from "../Checks/CheckboxWithInput";
 import RadioCheck from "../Checks/RadioCheck";
 import CustomAutocomplete from "../Selects/CustomSelect";
 import FormInput from "../TextFields/FormInput";
+import { useNavigate } from "react-router-dom";
+import FormDatePicker from "../Datepickers/FormDatePicker";
 
 const steps = [
   "Datos del solicitante",
@@ -35,6 +39,8 @@ const steps = [
 ];
 
 export default function FormCooperativa() {
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width:600px)");
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState({
     nombre: "",
@@ -61,8 +67,6 @@ export default function FormCooperativa() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFormData(docSnap.data());
-          console.log(docSnap.data());
-          console.log(formData);
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);
@@ -79,6 +83,7 @@ export default function FormCooperativa() {
       if (activeStep < steps.length - 1) {
         setActiveStep((prevStep) => prevStep + 1);
       } else {
+        navigate("/dashboard");
         setShowSnackbar(true);
       }
     }
@@ -100,7 +105,6 @@ export default function FormCooperativa() {
   };
 
   const handleSelectionTypeCo = (name, value) => {
-    console.log("Selected", name, "with value", value);
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -252,7 +256,10 @@ export default function FormCooperativa() {
                 para su cooperativa
               </ListItem>
               <ListItem>
-                <a href="https://www.ccc.org.co/sedevirtual/consulta-homonimia/">
+                <a
+                  href="https://www.ccc.org.co/sedevirtual/consulta-homonimia/"
+                  target="_blank"
+                >
                   <Typography color="#2e6ca6">
                     <strong>Verificar Homonimia</strong>
                   </Typography>
@@ -269,13 +276,27 @@ export default function FormCooperativa() {
         return (
           <Stack spacing={2}>
             <Alert severity="info">
-              Ingrese en la plataforma de la CC a través del botón identificado
-              como Iniciar Matricula/Inscripción
-            </Alert>
-            <Alert severity="info">
-              En esta parte del proceso, el sistema le genera el código único
-              del formulario - CUF - Tome nota de ello y consérvelo para
-              posteriores accesos
+              <List>
+                <ListItem>
+                  Ingrese en la plataforma de la CC a través del botón
+                  identificado como Iniciar Matricula/Inscripción
+                </ListItem>
+                <ListItem>
+                  <a
+                    href="https://www.ccc.org.co/sedevirtual/consulta-homonimia/"
+                    target="_blank"
+                  >
+                    <Typography color="#2e6ca6">
+                      <strong>Verificar Homonimia</strong>
+                    </Typography>
+                  </a>
+                </ListItem>
+                <ListItem>
+                  En esta parte del proceso, el sistema le genera el código
+                  único del formulario - CUF - Tome nota de ello y consérvelo
+                  para posteriores accesos
+                </ListItem>
+              </List>
             </Alert>
             <FormInput
               name="rSocial"
@@ -600,7 +621,7 @@ export default function FormCooperativa() {
               name="estadoActual"
               options={[
                 {
-                  value: "a   ctiva",
+                  value: "activa",
                   label: "Activa : Indica que se encuentra en funcionamiento",
                 },
                 {
@@ -720,6 +741,25 @@ export default function FormCooperativa() {
       case 5:
         return (
           <Stack spacing={2}>
+            <Alert severity="info">
+              Registre por orden de importancia la(s) actividad(es) económica(s)
+              que va a desarrollar de acuerdo con la Clasificación Industrial
+              Internacional Uniforme CIIU, indicando una actividad principal y
+              máximo tres clasificaciones secundarias. Asimismo, seleccione la
+              actividad con mayores ingresos con corte a 31 de diciembre del año
+              anterior. Si la empresa tiene menos de un año de existencia,
+              deberá ser con corte al mes inmediatamente anterior. Para
+              verificar su código CIIU puede hacerlo a través del siguiente
+              enlace:
+              <a
+                href="https://enlinea.ccc.org.co/appbusquedasciiu/#/auth/login?returnUrl=%2Fuser%2Fbuscador"
+                target="_blank"
+              >
+                <Typography color="#2e6ca6">
+                  <strong>Consultar Código CIIU</strong>
+                </Typography>
+              </a>
+            </Alert>
             <FormInput
               name="actividadEconomica"
               value={formData.actividadEconomica || ""}
@@ -737,6 +777,12 @@ export default function FormCooperativa() {
               helperText={
                 "Ingrese el código de la actividad económica reportado en la página consultada para el CIIU"
               }
+            />
+            <FormDatePicker
+              name="fechaInicio"
+              value={formData.fechaInicio} // Enviar valor como cadena en formato "YYYY-MM-DD"
+              onChange={(name, newValue) => handleInputChange(name, newValue)} // Usamos handleInputChange para manejar la fecha
+              placeholder="Fecha de inicio de la actividad indicada"
             />
             <RadioCheck
               label="Indicar si corresponde a la actividad que genera los mayores ingresos*"
@@ -757,12 +803,28 @@ export default function FormCooperativa() {
         return (
           <Stack spacing={2}>
             <Alert severity="info">
-              Persona jurídica: Una vez verificada la información del Registro
-              Único Tributario (RUT), manifiesto que la persona jurídica que
-              represento tiene las siguientes responsabilidades, calidades y
-              atributos tributarios: Consulte aquí las responsabilidades
-              tributarias, con el fin de evitar inconsistencias en la asignación
-              de su NIT por parte de la DIAN
+              <List>
+                <ListItem>
+                  Persona jurídica: Una vez verificada la información del
+                  Registro Único Tributario (RUT), manifiesto que la persona
+                  jurídica que represento tiene las siguientes
+                  responsabilidades, calidades y atributos tributarios:
+                </ListItem>
+                <ListItem>
+                  Consulte
+                  <a
+                    href="https://www.vue.gov.co/cali/consulte/consulta-de-responsabilidades-tributarias"
+                    target="_blank"
+                  >
+                    <Typography color="#2e6ca6" sx={{ ml: 0.5, mr: 0.5 }}>
+                      <strong> Aquí </strong>
+                    </Typography>
+                  </a>
+                  las responsabilidades tributarias, con el fin de evitar
+                  inconsistencias en la asignación de su NIT por parte de la
+                  DIAN
+                </ListItem>
+              </List>
             </Alert>
             <RadioCheck
               label="Confirmo que efectué la consulta de las responsabilidades tributarias en la herramienta que dispone la VUE*"
@@ -778,10 +840,8 @@ export default function FormCooperativa() {
               onChange={handleRadioChange}
             />
             <RadioCheck
-              label="Responsabilidad, calidad y atributo*
-Con base en la información acordada con el CONTADOR o el área que corresponda, indica la alternativa que les representa.
-
-En la serie de opciones o alternativas de respuesta que presenta la plataforma, algunos de los códigos no son consecutivos, al momento de la captura de información en la página de la CC"
+              label="Responsabilidad, calidad y atributo* 
+              Con base en la información acordada con el CONTADOR o el área que corresponda, indica la alternativa que les representa. En la serie de opciones o alternativas de respuesta que presenta la plataforma, algunos de los códigos no son consecutivos, al momento de la captura de información en la página de la CC"
               name="responsabilidad"
               options={[
                 {
@@ -1135,7 +1195,43 @@ En la serie de opciones o alternativas de respuesta que presenta la plataforma, 
           </Stack>
         );
       case 7:
-        return <Stack spacing={2}></Stack>;
+        return (
+          <Stack spacing={3}>
+            <Alert severity="info">
+              Una vez concluido el trámite hasta este punto, sigue el paso No 2
+              correspondiente al proceso de firma, donde la imagen siguiente
+              ilustra la etapa en la plataforma.
+            </Alert>
+            <Card sx={{ maxWidth: 500, mx: "auto" }}>
+              <CardMedia
+                component="img"
+                height="300"
+                image="/src/assets/images/FIRMA.png" // Reemplaza con la URL de tu imagen
+                alt="Proceso de firma"
+              />
+            </Card>
+
+            <Alert severity="info">PAGO</Alert>
+            <Card sx={{ maxWidth: 500, mx: "auto" }}>
+              <CardMedia
+                component="img"
+                height="300"
+                image="/src/assets/images/PAGO.png" // Reemplaza con la URL de tu imagen
+                alt="Pago"
+              />
+            </Card>
+
+            <Alert severity="info">DESCARGUE DOCUMENTOS Y RECIBO DE PAGO</Alert>
+            <Card sx={{ maxWidth: 500, mx: "auto" }}>
+              <CardMedia
+                component="img"
+                height="300"
+                image="/src/assets/images/Descargue.png" // Reemplaza con la URL de tu imagen
+                alt="Descargar documentos"
+              />
+            </Card>
+          </Stack>
+        );
 
       default:
         return <Typography>Finalización del formulario.</Typography>;
@@ -1154,12 +1250,32 @@ En la serie de opciones o alternativas de respuesta que presenta la plataforma, 
     );
   }
 
+  const handleStepClick = (step) => {
+    setActiveStep(step);
+  };
+
   return (
     <Card style={{ marginTop: 20, padding: "20px" }}>
-      <Stepper nonLinear activeStep={activeStep} sx={{ width: "100%", mb: 2 }}>
-        {steps.map((step) => (
-          <Step key={step}>
-            <StepLabel>{step}</StepLabel>
+      <Stepper
+        alternativeLabel
+        activeStep={activeStep}
+        orientation={isMobile ? "vertical" : "horizontal"}
+        nonLinear
+        sx={{ width: "100%", mb: 2 }}
+      >
+        {steps.map((step, index) => (
+          <Step key={step} completed={index < activeStep}>
+            <StepLabel
+              onClick={() => handleStepClick(index)}
+              sx={{
+                cursor: "pointer", // Cambia el cursor a pointer
+                "&:hover": {
+                  color: "primary.main", // Cambia el color cuando se pasa el cursor (opcional)
+                },
+              }}
+            >
+              {step}
+            </StepLabel>
           </Step>
         ))}
       </Stepper>

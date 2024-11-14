@@ -55,8 +55,6 @@ export default function FormActa() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFormData(docSnap.data());
-          console.log(docSnap.data());
-          console.log(formData);
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);
@@ -102,12 +100,12 @@ export default function FormActa() {
   };
 
   const saveData = async () => {
-    console.log(dayjs().format("MMMM"));
     try {
       // Establecer la fecha de hoy al guardar los datos
       const updatedFormData = {
         ...formData,
         hora: dayjs().format("HH"),
+        minutos: dayjs().format("mm"),
         dia: dayjs().format("DD"),
         mes: dayjs().format("MM"),
         mesName: dayjs().format("MMMM"),
