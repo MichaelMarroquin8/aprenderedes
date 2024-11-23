@@ -1161,7 +1161,7 @@ Si el cargo a desempeñar es ad-harem, en forma gratuita, así se hará constar 
     `Los presentes estatutos fueron aprobados por unanimidad, a los ${data.dia} días del mes de ${data.mesName} de ${data.año}.`
   );
 
-  cursorY += 5;
+  cursorY += 10;
   addJustifiedText(
     `________________________                              ________________________`
   );

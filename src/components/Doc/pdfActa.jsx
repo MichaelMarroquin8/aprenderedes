@@ -290,7 +290,7 @@ const PdfActa = ({ data }) => {
     `8. La presente acta fue leída y aprobada por unanimidad, siendo las ${data.cooperativaName} y en constancia se firma:`
   );
 
-  cursorY += 5;
+  cursorY += 10;
   addJustifiedText(
     `________________________               ________________________`
   );

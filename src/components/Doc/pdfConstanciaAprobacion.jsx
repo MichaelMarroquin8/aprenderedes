@@ -108,7 +108,7 @@ const pdfConstanciaGerente = ({ data }) => {
   cursorY += 7;
 
   addJustifiedText(
-    `Ciudad ${data.cooperativaName} Se firma a los ${data.dia} días del mes de ${data.mesName} de ${data.año}`
+    `Ciudad ${data.ciudad} Se firma a los ${data.dia} días del mes de ${data.mesName} de ${data.año}`
   );
 
   cursorY += 25;

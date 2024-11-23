@@ -177,14 +177,14 @@ export default function FormModelo() {
               name="admisión"
               value={formData.admisión || ""}
               onChange={handleChange}
-              placeholder="cuota de admisión en _____% del salario mínimo"
+              placeholder="cuota de admisión en _____% del Salario mínimo mensual legal vigente (SMMLV)"
             />
             <FormInput
               type="number"
               name="aportes"
               value={formData.aportes || ""}
               onChange={handleChange}
-              placeholder="Suscribir en aportes el valor del _____% del salario mínimo"
+              placeholder="Pagar mensualmente por concepto de aportes el valor del ___% del Salario mínimo mensual legal vigente (SMMLV)"
             />
             <FormInput
               type="number"

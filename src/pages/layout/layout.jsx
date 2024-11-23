@@ -11,7 +11,7 @@ export const Layout = () => {
         minHeight: "100vh", // Asegura que el fondo cubra toda la pantalla
         backgroundImage:
           theme.palette.mode === "light"
-            ? "linear-gradient(180deg, #c4e6b3, #FFF)"
+            ? "linear-gradient(180deg, #a6d98d, #FFF)"
             : `linear-gradient(#02294F, ${alpha("#090E10", 1)})`,
         backgroundSize: "100% 100%",
         backgroundRepeat: "no-repeat",

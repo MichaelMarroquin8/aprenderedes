@@ -81,24 +81,28 @@ export default function FormConstanciaG() {
 
   const saveData = async () => {
     try {
-      // Establecer la fecha de hoy al guardar los datos
+      // Formatear cantidadN como string con separadores de miles
+      const formattedCantidadN = Number(formData.cantidadN || 0).toLocaleString('es-ES', {
+        useGrouping: true,
+      });
+  
       const updatedFormData = {
         ...formData,
-        date: dayjs().format("DD/MMMM/YYYY"), // Establecer la fecha actual aquí
+        cantidadN: formattedCantidadN, // Guardar como string formateado
+        date: dayjs().format("DD/MM/YYYY"), // Establecer la fecha actual aquí
       };
-
+  
       await setDoc(
         doc(firestore, "constanciaGerente", userId),
         updatedFormData,
-        {
-          merge: true, // Merge para evitar sobrescribir datos previos
-        }
+        { merge: true }
       );
     } catch (error) {
       console.error("Error guardando datos:", error);
       setError("Error guardando los datos. Por favor, intente nuevamente.");
     }
   };
+  
 
   const validateStep = () => {
     const { cooperativaName, cantidadE, cantidadN, ciudad } = formData;

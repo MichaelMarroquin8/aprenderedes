@@ -188,7 +188,6 @@ export default function Login() {
                 loading={loading}
                 onClick={handleRegister}
                 size="md"
-                variant="solid"
                 color="primary"
               >
                 Inscribirse
@@ -228,7 +227,6 @@ export default function Login() {
                 loading={loading}
                 onClick={handleSignIn}
                 size="md"
-                variant="solid"
                 color="primary"
               >
                 Iniciar sesión
@@ -240,7 +238,7 @@ export default function Login() {
           <div className="overlay">
             <div className="overlay-panel overlay-left">
               <h1>¡Bienvenido de nuevo!</h1>
-              <Typography>
+              <Typography variant="h6">
                 Para mantenerse conectado con nosotros, inicie sesión con su
                 información personal.
               </Typography>
@@ -255,7 +253,7 @@ export default function Login() {
             </div>
             <div className="overlay-panel overlay-right">
               <h1>Hola, amigo!</h1>
-              <Typography>
+              <Typography variant="h6">
                 Introduce tus datos personales y comienza tu viaje con nosotros.
               </Typography>
               <Button

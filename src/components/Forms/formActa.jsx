@@ -66,14 +66,12 @@ export default function FormActa() {
   }, []);
 
   const handleNext = async () => {
-    if (validateStep()) {
-      await saveData(); // Guardar datos en cada paso
-      if (activeStep < steps.length - 1) {
-        setActiveStep((prevStep) => prevStep + 1);
-      } else {
-        navigate("/dashboard");
-        setShowSnackbar(true);
-      }
+    await saveData(); // Guardar datos en cada paso
+    if (activeStep < steps.length - 1) {
+      setActiveStep((prevStep) => prevStep + 1);
+    } else {
+      navigate("/dashboard");
+      setShowSnackbar(true);
     }
   };
 
@@ -120,18 +118,6 @@ export default function FormActa() {
       console.error("Error guardando datos:", error);
       setError("Error guardando los datos. Por favor, intente nuevamente.");
     }
-  };
-
-  const validateStep = () => {
-    const { cooperativaName, ciudad } = formData;
-    if (activeStep === 0 && (!cooperativaName || !ciudad)) {
-      setError(
-        "Por favor, complete todos los campos obligatorios correctamente."
-      );
-      return false;
-    }
-    setError("");
-    return true;
   };
 
   const renderStepContent = (step) => {

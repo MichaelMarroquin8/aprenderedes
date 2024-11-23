@@ -1,6 +1,29 @@
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
 export default function NavbarPortfolio() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const menuItems = [
+    { label: "Comuna 1", path: "/comuna1" },
+    { label: "Comuna 2", path: "/comuna2" },
+    { label: "Comuna 3", path: "/comuna3" },
+    { label: "Comuna 4", path: "/comuna4" },
+    { label: "Iniciar Sesión", path: "/login" },
+  ];
+
   return (
     <header className="header-area">
       <div className="container-fluid h-100">
@@ -21,74 +44,22 @@ export default function NavbarPortfolio() {
                   aria-expanded="false"
                   aria-label="Toggle navigation"
                 >
-                  <i className="fa fa-bars"></i> Menu
+                  <IconButton color="inherit" onClick={toggleDrawer}>
+                    <MenuIcon />
+                  </IconButton>
                 </button>
 
                 <div className="collapse navbar-collapse" id="studioMenu">
                   <ul className="navbar-nav ml-auto">
-                    <li className="nav-item dropdown">
-                      <div
-                        className="dropdown-menu"
-                        aria-labelledby="navbarDropdown"
-                      >
-                        <Link to={"/login"}>
-                          <a className="dropdown-item" href="index">
-                            Home
+                    {menuItems.map((item, index) => (
+                      <Link key={index} to={item.path}>
+                        <li className="nav-item">
+                          <a className="nav-link" href={item.path}>
+                            {item.label}
                           </a>
-                        </Link>
-                        <Link to={"/login"}>
-                          <a className="dropdown-item" href="index">
-                            Home
-                          </a>
-                        </Link>{" "}
-                        <Link to={"/login"}>
-                          <a className="dropdown-item" href="index">
-                            Home
-                          </a>
-                        </Link>{" "}
-                        <Link to={"/login"}>
-                          <a className="dropdown-item" href="index">
-                            Home
-                          </a>
-                        </Link>
-                      </div>
-                    </li>
-
-                    <Link to={"/login"}>
-                      <li className="nav-item">
-                        <a className="nav-link" href="portfolio.html">
-                          Comuna 1
-                        </a>
-                      </li>
-                    </Link>
-                    <Link to={"/Comuna 1"}>
-                      <li className="nav-item">
-                        <a className="nav-link" href="portfolio.html">
-                          Comuna 2
-                        </a>
-                      </li>
-                    </Link>
-                    <Link to={"/Comuna 1"}>
-                      <li className="nav-item">
-                        <a className="nav-link" href="portfolio.html">
-                          Comuna 3
-                        </a>
-                      </li>
-                    </Link>
-                    <Link to={"/Comuna 1"}>
-                      <li className="nav-item">
-                        <a className="nav-link" href="portfolio.html">
-                          Comuna 4
-                        </a>
-                      </li>
-                    </Link>
-                    <Link to={"/login"}>
-                      <li className="nav-item">
-                        <a className="nav-link" href="portfolio.html">
-                          Login
-                        </a>
-                      </li>
-                    </Link>
+                        </li>
+                      </Link>
+                    ))}
                   </ul>
                 </div>
               </nav>
@@ -96,6 +67,23 @@ export default function NavbarPortfolio() {
           </div>
         </div>
       </div>
+
+      {/* Drawer para menú en móvil */}
+      <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
+        <List>
+          {menuItems.map((item, index) => (
+            <ListItem
+              button
+              key={index}
+              onClick={toggleDrawer}
+              component={Link}
+              to={item.path}
+            >
+              <ListItemText primary={item.label} />
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
     </header>
   );
 }

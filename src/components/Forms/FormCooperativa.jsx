@@ -321,7 +321,7 @@ export default function FormCooperativa() {
             </Alert>
             <FormInput
               name="País"
-              value={formData.Pais || ""}
+              value={formData.País || ""}
               onChange={handleChange}
               placeholder="País"
             />

@@ -87,16 +87,22 @@ const pdfConstanciaGerente = ({ data }) => {
   cursorY += 25;
 
   addJustifiedText(
-    `Que los asociados fundadores de la Cooperativa  ${data.cooperativaName}, han cancelado cada uno la suma de  ${data.cantidadE} MIL PESOS (${data.cantidadN.toLocaleString()}) M/CTE, como aporte social inicial suscrito y pagado, de conformidad con lo establecido en los estatutos.`
+    `Que los asociados fundadores de la Cooperativa  ${
+      data.cooperativaName
+    }, han cancelado cada uno la suma de  ${
+      data.cantidadE
+    } MIL PESOS (${data.cantidadN.toLocaleString()}) M/CTE, como aporte social inicial suscrito y pagado, de conformidad con lo establecido en los estatutos.`
   );
 
   cursorY += 25;
 
   addJustifiedText(` ${data.date},  ${data.ciudad}.`);
 
-  cursorY += 50;
+  cursorY += 30;
 
   addCenteredBoldTitle(`Firma Gerente`, 12);
+  cursorY += 8;
+  addSubtitle("___________________________", 12);
   addSubtitle(`Cédula`, 12);
   // Guardar PDF
   doc.save(`Constancia gerencia.pdf`);

@@ -39,10 +39,10 @@ const pdfLink = () => {
   // ARTÍCULO 1 con texto justificado
   cursorY += 10;
   addJustifiedText(
-    `https://ruesfront.rues.org.co/
+    `https://www.ccc.org.co/sedevirtual/consulta-homonimia/
 Este es el link para buscar si ya existe el nombre de una cooperativa(Homonimia)
 
-https://clasificaciones.dane.gov.co/ciiu4-0/ciiu4_dispone
+https://enlinea.ccc.org.co/appbusquedasciiu/#/auth/login?returnUrl=%2Fuser%2Fbuscador
 Buscar la actividad económica el CIIU`
   );
 
