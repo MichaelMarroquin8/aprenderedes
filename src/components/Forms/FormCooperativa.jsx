@@ -27,6 +27,10 @@ import FormInput from "../TextFields/FormInput";
 import { useNavigate } from "react-router-dom";
 import FormDatePicker from "../Datepickers/FormDatePicker";
 
+import FIRMA from "/src/assets/images/FIRMA.png";
+import PAGO from "/src/assets/images/PAGO.png";
+import Descargue from "/src/assets/images/Descargue.png";
+
 const steps = [
   "Datos del solicitante",
   "INSCRIPCIÓN ESAL",
@@ -1206,19 +1210,14 @@ export default function FormCooperativa() {
               <CardMedia
                 component="img"
                 height="300"
-                image="/src/assets/images/FIRMA.png" // Reemplaza con la URL de tu imagen
+                image={FIRMA}
                 alt="Proceso de firma"
               />
             </Card>
 
             <Alert severity="info">PAGO</Alert>
             <Card sx={{ maxWidth: 500, mx: "auto" }}>
-              <CardMedia
-                component="img"
-                height="300"
-                image="/src/assets/images/PAGO.png" // Reemplaza con la URL de tu imagen
-                alt="Pago"
-              />
+              <CardMedia component="img" height="300" image={PAGO} alt="Pago" />
             </Card>
 
             <Alert severity="info">DESCARGUE DOCUMENTOS Y RECIBO DE PAGO</Alert>
@@ -1226,7 +1225,7 @@ export default function FormCooperativa() {
               <CardMedia
                 component="img"
                 height="300"
-                image="/src/assets/images/Descargue.png" // Reemplaza con la URL de tu imagen
+                image={Descargue}
                 alt="Descargar documentos"
               />
             </Card>

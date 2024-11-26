@@ -24,6 +24,7 @@ import logoSena from "src/assets/images/logo-sena.svg";
 import { Logout } from "@mui/icons-material";
 import { signOut } from "firebase/auth";
 import { auth } from "src/services/firebase-config"; // Asegúrate de que el auth está correctamente configurado
+import { Link } from "react-router-dom";
 
 function ColorSchemeToggle() {
   const dispatch = useDispatch();
@@ -79,8 +80,10 @@ export default function NavbarDash() {
           display: { xs: "none", sm: "flex" },
         }}
       >
-        <Avatar src={logoSena} sx={{ maxWidth: "60px", maxHeight: "60px" }} />
-        <Typography variant="logo">Aprende redes solidarias</Typography>
+        <Link to={"/dashboard"}>
+          <Avatar src={logoSena} sx={{ maxWidth: "60px", maxHeight: "60px" }} />
+          <Typography variant="logo">Aprende redes solidarias</Typography>
+        </Link>
       </Stack>
 
       <Box
@@ -147,7 +150,7 @@ export default function NavbarDash() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={handleClose}>
-          <Avatar /> Name profile
+          <Avatar /> Nombre
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleSignOut}>

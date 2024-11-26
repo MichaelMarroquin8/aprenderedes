@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  Avatar,
   Drawer,
   IconButton,
   List,
@@ -9,6 +10,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
+import logoSena from "src/assets/images/logo-sena.svg";
 export default function NavbarPortfolio() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -17,10 +19,10 @@ export default function NavbarPortfolio() {
   };
 
   const menuItems = [
-    { label: "Comuna 1", path: "/comuna1" },
-    { label: "Comuna 2", path: "/comuna2" },
-    { label: "Comuna 3", path: "/comuna3" },
-    { label: "Comuna 4", path: "/comuna4" },
+    { label: "Comuna 1", path: "/" },
+    { label: "Comuna 2", path: "/" },
+    { label: "Comuna 3", path: "/" },
+    { label: "Comuna 4", path: "/" },
     { label: "Iniciar Sesión", path: "/login" },
   ];
 
@@ -32,7 +34,10 @@ export default function NavbarPortfolio() {
             <div className="main-menu h-100">
               <nav className="navbar h-100 navbar-expand-lg">
                 <a className="navbar-brand" href="index.html">
-                  <img src="/src/assets/images/core-img/logo.png" alt="Logo" />
+                  <Avatar
+                    src={logoSena}
+                    sx={{ width: "100px", height: "100px" }}
+                  />
                 </a>
 
                 <button

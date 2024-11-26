@@ -1252,3 +1252,33 @@ span.accor-open {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   }
 }
+
+.mySwiper2 {
+  height: 80%; /* Altura del slider principal */
+  margin-bottom: 20px; /* Espaciado entre el slider principal y las miniaturas */
+}
+
+.mySwiper {
+  height: 100px; /* Altura de las miniaturas */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mySwiper .swiper-slide {
+  width: 100px; /* Ancho de cada miniatura */
+  height: 100%; /* Altura completa de las miniaturas */
+  opacity: 0.5; /* Opacidad para las miniaturas no activas */
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.mySwiper .swiper-slide-thumb-active {
+  opacity: 1; /* Aumenta opacidad para la miniatura activa */
+  border: 2px solid #fff; /* Borde para indicar selección */
+}
+
+.carousel-item {
+  background-size: cover;
+  background-position: center;
+}

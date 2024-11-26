@@ -140,134 +140,233 @@ export default function Login() {
     }
   }, [navigate]);
 
+  const isMobile = window.innerWidth <= 768;
+
   return (
     <div className="body">
-      <div
-        className={`container ${
-          isRightPanelActive ? "right-panel-active" : ""
-        }`}
-        id="container"
-      >
-        <div className="form-container sign-up-container">
-          <form action="#">
-            <Box
-              sx={{
-                py: 2,
-                display: "grid",
-                gap: 2,
-                alignItems: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <h1>Crear Cuenta</h1>
-              <Input
-                type="text"
-                id="name"
-                placeholder="Nombre"
-                onChange={(e) => setName(e.target.value)}
-                aria-label="Nombre"
-              />
-              <Input
-                error={errors.email}
-                type="email"
-                id="email"
-                placeholder="Correo"
-                onChange={(e) => setEmail(e.target.value)}
-                aria-label="Correo"
-              />
-              <Input
-                error={errors.password}
-                type="password"
-                id="password"
-                placeholder="Contraseña"
-                onChange={(e) => setPassword(e.target.value)}
-                aria-label="Contraseña"
-              />
-              <Button
-                disabled={loading || !email || !password}
-                loading={loading}
-                onClick={handleRegister}
-                size="md"
-                color="primary"
+      {!isMobile ? (
+        <div
+          className={`container ${
+            isRightPanelActive ? "right-panel-active" : ""
+          }`}
+          id="container"
+        >
+          <div className="form-container sign-up-container">
+            <form action="#">
+              <Box
+                sx={{
+                  py: 2,
+                  display: "grid",
+                  gap: 2,
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                }}
               >
-                Inscribirse
-              </Button>
-            </Box>
-          </form>
-        </div>
-        <div className="form-container sign-in-container">
-          <form action="#">
-            <Box
-              sx={{
-                py: 2,
-                display: "grid",
-                gap: 2,
-                alignItems: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <h1>Iniciar sesión</h1>
-              <Input
-                error={errors.email}
-                type="email"
-                placeholder="Correo"
-                onChange={(e) => setEmail(e.target.value)}
-                aria-label="Correo"
-              />
-              <Input
-                error={errors.password}
-                type="password"
-                placeholder="Contraseña"
-                onChange={(e) => setPassword(e.target.value)}
-                aria-label="Contraseña"
-              />
-              <a href="#">¿Olvidaste tu contraseña?</a>
-              <Button
-                disabled={loading || !email || !password}
-                loading={loading}
-                onClick={handleSignIn}
-                size="md"
-                color="primary"
+                <h1>Crear Cuenta</h1>
+                <Input
+                  type="text"
+                  id="name"
+                  placeholder="Nombre"
+                  onChange={(e) => setName(e.target.value)}
+                  aria-label="Nombre"
+                />
+                <Input
+                  error={errors.email}
+                  type="email"
+                  id="email"
+                  placeholder="Correo"
+                  onChange={(e) => setEmail(e.target.value)}
+                  aria-label="Correo"
+                />
+                <Input
+                  error={errors.password}
+                  type="password"
+                  id="password"
+                  placeholder="Contraseña"
+                  onChange={(e) => setPassword(e.target.value)}
+                  aria-label="Contraseña"
+                />
+                <Button
+                  disabled={loading || !email || !password}
+                  loading={loading}
+                  onClick={handleRegister}
+                  size="md"
+                  color="primary"
+                  variant="outlined"
+                >
+                  Inscribirse
+                </Button>
+              </Box>
+            </form>
+          </div>
+          <div className="form-container sign-in-container">
+            <form action="#">
+              <Box
+                sx={{
+                  py: 2,
+                  display: "grid",
+                  gap: 2,
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                }}
               >
-                Iniciar sesión
-              </Button>
-            </Box>
-          </form>
-        </div>
-        <div className="overlay-container">
-          <div className="overlay">
-            <div className="overlay-panel overlay-left">
-              <h1>¡Bienvenido de nuevo!</h1>
-              <Typography variant="h6">
-                Para mantenerse conectado con nosotros, inicie sesión con su
-                información personal.
-              </Typography>
-              <Button
-                onClick={handleSignInClick}
-                size="md"
-                variant="outlined"
-                color="neutral"
-              >
-                Iniciar sesión
-              </Button>
-            </div>
-            <div className="overlay-panel overlay-right">
-              <h1>Hola, amigo!</h1>
-              <Typography variant="h6">
-                Introduce tus datos personales y comienza tu viaje con nosotros.
-              </Typography>
-              <Button
-                onClick={handleSignUpClick}
-                size="md"
-                variant="outlined"
-                color="neutral"
-              >
-                Inscribirse
-              </Button>
+                <h1>Iniciar sesión</h1>
+                <Input
+                  error={errors.email}
+                  type="email"
+                  placeholder="Correo"
+                  onChange={(e) => setEmail(e.target.value)}
+                  aria-label="Correo"
+                />
+                <Input
+                  error={errors.password}
+                  type="password"
+                  placeholder="Contraseña"
+                  onChange={(e) => setPassword(e.target.value)}
+                  aria-label="Contraseña"
+                />
+                <a href="#">¿Olvidaste tu contraseña?</a>
+                <Button
+                  disabled={loading || !email || !password}
+                  loading={loading}
+                  onClick={handleSignIn}
+                  size="md"
+                  color="primary"
+                  variant="outlined"
+                >
+                  Iniciar sesión
+                </Button>
+              </Box>
+            </form>
+          </div>
+          <div className="overlay-container">
+            <div className="overlay">
+              <div className="overlay-panel overlay-left">
+                <h1>¡Bienvenido de nuevo!</h1>
+                <Typography variant="h6">
+                  Para mantenerse conectado con nosotros, inicie sesión con su
+                  información personal.
+                </Typography>
+                <Button
+                  onClick={handleSignInClick}
+                  size="md"
+                  variant="outlined"
+                  color="neutral"
+                >
+                  Iniciar sesión
+                </Button>
+              </div>
+              <div className="overlay-panel overlay-right">
+                <h1>Hola, amigo!</h1>
+                <Typography variant="h6">
+                  Introduce tus datos personales y comienza tu viaje con
+                  nosotros.
+                </Typography>
+                <Button
+                  onClick={handleSignUpClick}
+                  size="md"
+                  variant="outlined"
+                  color="neutral"
+                >
+                  Inscribirse
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* Mostrar el formulario de acuerdo al panel activo */}
+          {isRightPanelActive ? (
+            <div className="form-container sign-up-container">
+              <form>
+                <Box
+                  sx={{
+                    py: 2,
+                    display: "grid",
+                    gap: 2,
+                    alignItems: "center",
+                  }}
+                >
+                  <h1>Crear Cuenta</h1>
+                  <Input
+                    type="text"
+                    placeholder="Nombre"
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <Input
+                    error={errors.email}
+                    type="email"
+                    placeholder="Correo"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <Input
+                    error={errors.password}
+                    type="password"
+                    placeholder="Contraseña"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <Button
+                    disabled={loading || !email || !password}
+                    loading={loading}
+                    onClick={handleRegister}
+                  >
+                    Inscribirse
+                  </Button>
+                  <Button
+                    variant="text"
+                    onClick={() => setIsRightPanelActive(false)}
+                  >
+                    Ya tengo una cuenta
+                  </Button>
+                </Box>
+              </form>
+            </div>
+          ) : (
+            <div className="form-container sign-in-container">
+              <form>
+                <Box
+                  sx={{
+                    py: 2,
+                    display: "grid",
+                    gap: 2,
+                    alignItems: "center",
+                  }}
+                >
+                  <h1>Iniciar sesión</h1>
+                  <Input
+                    error={errors.email}
+                    type="email"
+                    placeholder="Correo"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <Input
+                    error={errors.password}
+                    type="password"
+                    placeholder="Contraseña"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <a href="#">¿Olvidaste tu contraseña?</a>
+                  <Button
+                    disabled={loading || !email || !password}
+                    loading={loading}
+                    onClick={handleSignIn}
+                  >
+                    Iniciar sesión
+                  </Button>
+                  <Button
+                    variant="text"
+                    onClick={() => setIsRightPanelActive(true)}
+                  >
+                    Crear una cuenta
+                  </Button>
+                </Box>
+              </form>
+            </div>
+          )}
+        </>
+      )}
+
       {state.message && (
         <Alert color="danger" variant="soft">
           {state.message}
